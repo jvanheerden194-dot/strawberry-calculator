@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strawberry Pawnshop Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,900&family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0d0205;
+      --bg-card: rgba(45, 8, 22, 0.88);
+      --bg-panel: rgba(32, 5, 14, 0.95);
+      
+      /* Strawberry Palette: Red, Pink, Black */
+      --strawberry-red: #ff0055;
+      --strawberry-pink: #ff007f;
+      --pink-glow: #ff529a;
+      --pink-soft: #ffb6c1;
+      
+      --text-white: #fff0f5;
+      --text-muted: #b37f93;
+      --success: #00ffaa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: #000;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 0, 85, 0.2) 0%, transparent 70%),
+        radial-gradient(circle at 80% 20%, rgba(255, 0, 127, 0.15) 0%, transparent 60%);
+      color: var(--text-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--strawberry-red);
+      border-radius: 4px;
+      box-shadow: 0 0 10px var(--strawberry-red);
+    }
+
+    .tablet-device {
+      width: 100%;
+      max-width: 1240px;
+      height: 92vh;
+      max-height: 880px;
+      background: #16090d;
+      border-radius: 32px;
+      box-shadow: 0 0 60px rgba(255, 0, 85, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.95);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tablet-screen {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 127, 0.18) 0%, transparent 50%);
+    }
+
+    .tablet-home-bar {
+      height: 18px;
+      background: #100508;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .home-pill {
+      width: 150px;
+      height: 5px;
+      background: rgba(255, 0, 85, 0.5);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
+    }
+
+    .hud-box {
+      position: relative;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 0, 85, 0.1);
+    }
+
+    .hud-corner {
+      clip-path: polygon(
+        0 0, 
+        calc(100% - 15px) 0, 100% 15px, 
+        100% 100%, 
+        15px 100%, 0 calc(100% - 15px)
+      );
+    }
+
+    .branding-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 16px;
+      padding: 16px 24px;
+      margin-bottom: 18px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-container h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      color: #ffffff;
+    }
+
+    .logo-container h1 span {
+      color: var(--strawberry-red);
+      display: block;
+      text-shadow: 0 0 18px rgba(255, 0, 85, 0.9);
+    }
+
+    .status-boxes {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(28, 3, 12, 0.95);
+      padding: 10px 20px;
+      border-radius: 12px;
+      text-align: right;
+      min-width: 175px;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 12px rgba(255, 0, 85, 0.15);
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-card span {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1.2px;
+    }
+
+    .stat-card strong {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+
+    .stat-card strong.buy-total { 
+      color: var(--strawberry-red);
+      text-shadow: 0 0 15px rgba(255, 0, 85, 0.8);
+    }
+    .stat-card strong.sell-total { 
+      color: var(--pink-glow);
+      text-shadow: 0 0 15px rgba(255, 82, 154, 0.8);
+    }
+    .stat-card strong.seller-profit { 
+      color: var(--success);
+      text-shadow: 0 0 15px rgba(0, 255, 170, 0.8);
+    }
+
+    .mode-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .mode-btn {
+      flex: 2;
+      min-width: 220px;
+      background: var(--bg-card);
+      border: none;
+      color: var(--text-muted);
+      padding: 14px;
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-btn:hover {
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .mode-btn.active-buy {
+      background: linear-gradient(135deg, rgba(255, 0, 85, 0.35) 0%, rgba(255, 0, 127, 0.3) 100%);
+      color: #ffffff;
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.5), inset 0 0 15px rgba(255, 0, 85, 0.3);
+      text-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
+    }
+
+    .mode-btn.active-sell {
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.35) 0%, rgba(255, 82, 154, 0.25) 100%);
+      color: #ffffff;
+      box-shadow: 0 0 30px rgba(255, 0, 127, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.3);
+      text-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+    }
+
+    .staff-container {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--bg-card);
+      padding: 8px 16px;
+      border-radius: 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .staff-container label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--strawberry-red);
+      margin-bottom: 2px;
+    }
+
+    .staff-select {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .staff-select option {
+      background: #22030d;
+      color: #fff;
+    }
+
+    .controls-panel {
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .search-sort-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .search-sort-row input, .search-sort-row select {
+      background: rgba(20, 2, 8, 0.95);
+      border: none;
+      color: var(--text-white);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-sort-row input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-sort-row input:focus, .search-sort-row select:focus {
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+      background: rgba(255, 0, 85, 0.05);
+    }
+
+    .btn-action {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-reset {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .btn-reset:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-confirm {
+      background: linear-gradient(135deg, var(--strawberry-red) 0%, var(--strawberry-pink) 100%);
+      color: #0d0205;
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
+    }
+
+    .btn-confirm:hover {
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.9);
+      transform: scale(1.02);
+    }
+
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: rgba(43, 4, 18, 0.8);
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: var(--strawberry-red);
+      color: #0d0205;
+      font-weight: 900;
+      box-shadow: 0 0 16px rgba(255, 0, 85, 0.7);
+    }
+
+    .table-container {
+      border-radius: 16px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(20, 2, 8, 0.98);
+      color: var(--strawberry-red);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 14px 18px;
+      text-shadow: 0 0 10px rgba(255, 0, 85, 0.6);
+    }
+
+    td {
+      padding: 12px 18px;
+      vertical-align: middle;
+      transition: background 0.2s ease;
+    }
+
+    tr {
+      transition: all 0.2s ease;
+    }
+
+    tr:hover td {
+      background: rgba(255, 0, 85, 0.08);
+    }
+
+    .category-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 0, 85, 0.1);
+      color: var(--strawberry-red);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .item-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+
+    .price-tag {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .qty-input {
+      width: 90px;
+      background: rgba(20, 2, 8, 0.95);
+      border: none;
+      color: #fff;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 8px;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .qty-input:focus {
+      box-shadow: 0 0 16px rgba(255, 0, 85, 0.7);
+      background: rgba(255, 0, 85, 0.1);
+    }
+
+    .item-total {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .item-total.buy { 
+      color: var(--strawberry-red);
+      text-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
+    }
+    .item-total.sell { 
+      color: var(--pink-glow); 
+      text-shadow: 0 0 12px rgba(255, 82, 154, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+<div class="tablet-device">
+  <div class="tablet-screen">
+    <div class="hud-box hud-corner branding-bar">
+      <div class="logo-container">
+        <div>
+          <h1>Strawberry Pawnshop <span>Calculator</span></h1>
+        </div>
+      </div>
+      <div class="status-boxes">
+        <div class="stat-card" id="boxPrimary">
+          <span id="lblPrimary">Total Buying Price</span>
+          <strong id="valPrimary" class="buy-total">$0.00</strong>
+        </div>
+        <div class="stat-card" id="boxSecondary">
+          <span id="lblSecondary">Employee Commission (5%)</span>
+          <strong id="valSecondary" class="seller-profit">$0.00</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-nav">
+      <button class="mode-btn active-buy" id="btnModeBuy">
+        🍓 Buying From Customers
+      </button>
+      <button class="mode-btn" id="btnModeSell">
+        ⚡ Selling To Customers (Heist Gear)
+      </button>
+      
+      <div class="staff-container">
+        <label for="staffSelect">👤 Staff Member</label>
+        <select id="staffSelect" class="staff-select">
+          <option value="Lexi">Lexi</option>
+          <option value="Xander">Xander</option>
+          <option value="Cody">Cody</option>
+          <option value="Miguel">Miguel</option>
+          <option value="Kyle">Kyle</option>
+          
+        </select>
+      </div>
+    </div>
+
+    <div class="hud-box controls-panel">
+      <div class="search-sort-row">
+        <input type="text" id="searchInput" placeholder="🔍 Search items (e.g. Diamond, Drill, Egg)...">
+        <select id="sortSelect">
+          <option value="alpha-asc">Alphabetical (A - Z)</option>
+          <option value="alpha-desc">Alphabetical (Z - A)</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+        <button class="btn-action btn-reset" id="resetBtn">Reset</button>
+        <button class="btn-action btn-confirm" id="confirmBtn">Confirm Send</button>
+      </div>
+
+      <div class="category-tabs" id="categoryContainer"></div>
+    </div>
+
+    <div class="hud-box table-container">
+      <table>
+        <thead>
+          <tr id="tableHeaderRow"></tr>
+        </thead>
+        <tbody id="itemsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tablet-home-bar">
+    <div class="home-pill"></div>
+  </div>
+</div>
+
+<script>
+  let activeMode = "BUY";
+  let currentCategory = "all";
+  let searchQuery = "";
+  let currentSort = "alpha-asc";
+
+  // GOOGLE APPS SCRIPT URL
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwTEl4Cl3fUiZLS5pZgpct6zJhFJbbfSDQ37D_SfhOx8T-_IKPw0BO8BGTKFF1mwm-iGA/exec";
+
+  // MAIN SALES CHANNEL WEBHOOK
+  const MAIN_SALES_WEBHOOK = "https://discord.com/api/webhooks/1549840980520206338/k6Nhb6Ql7VHBYnUWY-WEr435Npl59KU7nzio91YjwOcHrLfetkQgJ4ybfYuaghRV89JC";
+
+  // INDIVIDUAL STAFF CHANNEL WEBHOOKS
+  const STAFF_WEBHOOKS = {
+    "Lexi": "https://discord.com/api/webhooks/1556327580863307829/mOBUxLRCKucP4yTVk4Rc1K75PGVS8JqgQNYEdraYdDGXO3SJCm6Yfjsc9W8OlpLqHyb-",
+    
+"Xander": "https://discord.com/api/webhooks/1556351784530878554/gXFQsjAij1eNnXqXdsPeWs99W9HaiFUAaxPJR5oADchIg4Ciq75eBPx0rx6Yta4E-2wI",
+    
+"Cody": "https://discord.com/api/webhooks/1556325247379054596/pgkzs4aTQxF4ouXl2AR50Lm_p32gtdme_RuOtmGEQsuFyskJgbkbh9HBb3p3i8rw37zk",
+    
+"Miguel": "https://discord.com/api/webhooks/1556326357837815951/L9PenftlgpfDuZgJT228e4XDitT-PJNtHEwQOZqICV6SalS-sF5kKadF-TvPr_yBlTll",
+    
+"Kyle": "https://discord.com/api/webhooks/1556613687333224510/_xNUBQL_8s1u2kx1iXviiEac6Jr0-HZUQCmoNjDG5BDw6-J9AdQe9n-WoNkAXDYoyRZM",
+  };
+
+  const buyItems = [
+    { name: "Asylum Gold Egg", cat: "Eggs", buy: 82500 },
+    { name: "Asylum Prime Egg", cat: "Eggs", buy: 125000 },
+    { name: "Ballas Egg", cat: "Eggs", buy: 46750 },
+    { name: "Boerboel Egg", cat: "Eggs", buy: 46750 },
+    { name: "Boertjies Egg", cat: "Eggs", buy: 46750 },
+    { name: "Cartel Egg", cat: "Eggs", buy: 46750 },
+    { name: "Dino Egg", cat: "Eggs", buy: 12500 },
+    { name: "GSF Egg", cat: "Eggs", buy: 46750 },
+    { name: "Lost Egg", cat: "Eggs", buy: 46750 },
+    { name: "Mafia Egg", cat: "Eggs", buy: 46750 },
+    { name: "Marabunta Egg", cat: "Eggs", buy: 46750 },
+    { name: "SOA Egg", cat: "Eggs", buy: 46750 },
+    { name: "Vagos Egg", cat: "Eggs", buy: 46750 },
+    { name: "Yakhuza Egg", cat: "Eggs", buy: 46750 },
+
+    { name: "10K Gold Chain", cat: "Jewelry", buy: 2800 },
+    { name: "Asylum Gold Necklace", cat: "Jewelry", buy: 4650 },
+    { name: "Asylum Prime Necklace", cat: "Jewelry", buy: 5350 },
+    { name: "Canary Diamond Necklace", cat: "Jewelry", buy: 17850 },
+    { name: "Canary Diamond Necklace Silver", cat: "Jewelry", buy: 17765 },
+    { name: "Diamond", cat: "Jewelry", buy: 500 },
+    { name: "Diamond Bar", cat: "Jewelry", buy: 1700 },
+    { name: "Diamond Earring / Silver", cat: "Jewelry", buy: 765 },
+    { name: "Diamond Necklace", cat: "Jewelry", buy: 1275 },
+    { name: "Diamond Ring / Silver", cat: "Jewelry", buy: 765 },
+    { name: "Dragon Ring", cat: "Jewelry", buy: 1360 },
+    { name: "Emerald", cat: "Jewelry", buy: 300 },
+    { name: "Emerald Earring / Silver", cat: "Jewelry", buy: 680 },
+    { name: "Emerald Ring / Silver", cat: "Jewelry", buy: 680 },
+    { name: "Gemstone Necklace", cat: "Jewelry", buy: 4037.50 },
+    { name: "Gemstone Necklace Silver", cat: "Jewelry", buy: 3952.50 },
+    { name: "Gold Chain", cat: "Jewelry", buy: 500 },
+    { name: "Gold Earring / Ingot", cat: "Jewelry", buy: 300 },
+    { name: "Gold Ring", cat: "Jewelry", buy: 425 },
+    { name: "Goldbar", cat: "Jewelry", buy: 1450 },
+    { name: "Golden Watch", cat: "Jewelry", buy: 300 },
+    { name: "Rolex", cat: "Jewelry", buy: 340 },
+    { name: "Ruby", cat: "Jewelry", buy: 285 },
+    { name: "Ruby Chain", cat: "Jewelry", buy: 680 },
+    { name: "Ruby Earring", cat: "Jewelry", buy: 595 },
+    { name: "Ruby Earring Silver", cat: "Jewelry", buy: 594.15 },
+    { name: "Ruby Ring / Silver", cat: "Jewelry", buy: 595 },
+    { name: "Ruby Wolf Earrings", cat: "Jewelry", buy: 1360 },
+    { name: "Sapphire", cat: "Jewelry", buy: 255 },
+    { name: "Sapphire Earring / Silver", cat: "Jewelry", buy: 510 },
+    { name: "Sapphire Necklace", cat: "Jewelry", buy: 1025 },
+    { name: "Sapphire Necklace Silver", cat: "Jewelry", buy: 1275 },
+    { name: "Sapphire Ring / Silver", cat: "Jewelry", buy: 510 },
+    { name: "Silver Chain", cat: "Jewelry", buy: 700 },
+    { name: "Silver Earring / Ingot", cat: "Jewelry", buy: 340 },
+    { name: "Silver Ring", cat: "Jewelry", buy: 550 },
+    { name: "Skull Ring", cat: "Jewelry", buy: 1360 },
+    { name: "Sovereign Pendant", cat: "Jewelry", buy: 10200 },
+
+    { name: "Uncut Diamond", cat: "Jewelry", buy: 100 },
+    { name: "Uncut Emerald", cat: "Jewelry", buy: 70 },
+    { name: "Uncut Ruby", cat: "Jewelry", buy: 60 },
+    { name: "Uncut Sapphire", cat: "Jewelry", buy: 50 },
+
+    { name: "PS5", cat: "Electronics", buy: 450 },
+    { name: "Samsung Phone / S10", cat: "Electronics", buy: 450 },
+    { name: "Laptop", cat: "Electronics", buy: 450 },
+    { name: "iPhone 13", cat: "Electronics", buy: 297.50 },
+    { name: "Tablet", cat: "Electronics", buy: 450 },
+    { name: "Laptop (Low Tier)", cat: "Electronics", buy: 450 },
+    { name: "All-in-One Printer", cat: "Electronics", buy: 4250 },
+    { name: "Astronomy Telescope", cat: "Electronics", buy: 5100 },
+    { name: "Audio System", cat: "Electronics", buy: 4675 },
+    { name: "Camera", cat: "Electronics", buy: 4675 },
+    { name: "Classic Microwave", cat: "Electronics", buy: 3825 },
+    { name: "Classic Toaster", cat: "Electronics", buy: 850 },
+    { name: "Coffee Maker", cat: "Electronics", buy: 2550 },
+    { name: "CRT Television", cat: "Electronics", buy: 2975 },
+    { name: "Data Drive", cat: "Electronics", buy: 4675 },
+    { name: "Digital Scales", cat: "Electronics", buy: 1700 },
+    { name: "Electric Kettle", cat: "Electronics", buy: 1275 },
+    { name: "Gaming Console", cat: "Electronics", buy: 6375 },
+    { name: "Gang Tablet", cat: "Electronics", buy: 29750 },
+    { name: "LCD Monitor", cat: "Electronics", buy: 3825 },
+    { name: "LED Television", cat: "Electronics", buy: 5525 },
+    { name: "Microwave", cat: "Electronics", buy: 3825 },
+    { name: "Modern Microwave", cat: "Electronics", buy: 4675 },
+    { name: "Modern Toaster", cat: "Electronics", buy: 1275 },
+    { name: "Music Dock", cat: "Electronics", buy: 1700 },
+    { name: "Portable Boombox", cat: "Electronics", buy: 2125 },
+    { name: "Professional Hair Dryer", cat: "Electronics", buy: 1700 },
+    { name: "Radio Cassette Player", cat: "Electronics", buy: 1275 },
+    { name: "Smart Television", cat: "Electronics", buy: 8075 },
+    { name: "Stand Mixer", cat: "Electronics", buy: 3400 },
+    { name: "Stolen Computer", cat: "Electronics", buy: 1317.50 },
+    { name: "Stolen TV", cat: "Electronics", buy: 1317.50 },
+    { name: "VCR Player", cat: "Electronics", buy: 1275 },
+    { name: "Xbox X", cat: "Electronics", buy: 4675 },
+
+    { name: "Captain Skull", cat: "Relics & Art", buy: 145000 },
+    { name: "Panther", cat: "Relics & Art", buy: 62500 },
+    { name: "Golden Pogo", cat: "Miscellaneous", buy: 62500 },
+    { name: "Yellow / Canary Diamond", cat: "Relics & Art", buy: 14500 },
+    { name: "Art 1–5 (Painting)", cat: "Relics & Art", buy: 9000 },
+    { name: "Decorated Pot", cat: "Relics & Art", buy: 2040 },
+    { name: "E Chain", cat: "Relics & Art", buy: 680 },
+    { name: "Fossil", cat: "Relics & Art", buy: 1147.50 },
+    { name: "Mythic Fossil", cat: "Relics & Art", buy: 1190 },
+    { name: "Onyx Relic", cat: "Relics & Art", buy: 1020 },
+    { name: "Pot", cat: "Relics & Art", buy: 977.50 },
+    { name: "Prince Ruby", cat: "Relics & Art", buy: 1360 },
+    { name: "Rare Fossil", cat: "Relics & Art", buy: 1275 },
+    { name: "Relic", cat: "Relics & Art", buy: 1062.50 },
+    { name: "Skull", cat: "Relics & Art", buy: 892.50 },
+    { name: "Slate Tablet", cat: "Relics & Art", buy: 1530 },
+    { name: "Time Capsule", cat: "Relics & Art", buy: 2295 },
+
+    { name: "Perlemoen", cat: "Miscellaneous", buy: 750 },
+    { name: "Deluxe Treasure Map", cat: "Miscellaneous", buy: 765 },
+    { name: "Premium Treasure Map", cat: "Miscellaneous", buy: 600 },
+    { name: "Treasure Map", cat: "Miscellaneous", buy: 350 },
+    { name: "Warehouse Key", cat: "Miscellaneous", buy: 350 },
+    { name: "Heavy Armor", cat: "Miscellaneous", buy: 210 },
+
+    { name: "Ancient Coin", cat: "Metal Detecting", buy: 1105 },
+    { name: "Black Watch", cat: "Metal Detecting", buy: 552.50 },
+    { name: "Bottlecap", cat: "Metal Detecting", buy: 8.50 },
+    { name: "Broken Junk", cat: "Metal Detecting", buy: 85 },
+    { name: "Copper Nugget", cat: "Metal Detecting", buy: 382.50 },
+    { name: "Crushed Can", cat: "Metal Detecting", buy: 170 },
+    { name: "Diamond Earrings (Metal)", cat: "Metal Detecting", buy: 1275 },
+    { name: "Diamond Necklace (Metal)", cat: "Metal Detecting", buy: 1275 },
+    { name: "Diamond Ring (Metal)", cat: "Metal Detecting", buy: 1275 },
+    { name: "Earpod", cat: "Metal Detecting", buy: 680 },
+    { name: "Gold Dollar", cat: "Metal Detecting", buy: 1105 },
+    { name: "Gold Earrings (Metal)", cat: "Metal Detecting", buy: 1020 },
+    { name: "Gold Necklace (Metal)", cat: "Metal Detecting", buy: 1190 },
+    { name: "Gold Nugget", cat: "Metal Detecting", buy: 1487.50 },
+    { name: "Gold Ounce", cat: "Metal Detecting", buy: 1572.50 },
+    { name: "Gold Ring (Metal)", cat: "Metal Detecting", buy: 1275 },
+    { name: "Half Dollar", cat: "Metal Detecting", buy: 722.50 },
+    { name: "Iron Nugget", cat: "Metal Detecting", buy: 637.50 },
+    { name: "Lighter", cat: "Metal Detecting", buy: 10.20 },
+    { name: "Metal Can", cat: "Metal Detecting", buy: 11.90 },
+    { name: "Nails", cat: "Metal Detecting", buy: 15.30 },
+    { name: "Needle", cat: "Metal Detecting", buy: 17 },
+    { name: "Nickle", cat: "Metal Detecting", buy: 255 },
+    { name: "Nutails", cat: "Metal Detecting", buy: 18.70 },
+    { name: "Old Shotgunshell", cat: "Metal Detecting", buy: 21.25 },
+    { name: "Paperclip", cat: "Metal Detecting", buy: 23.80 },
+    { name: "Platinum Nugget", cat: "Metal Detecting", buy: 1445 },
+    { name: "Presidential Watch", cat: "Metal Detecting", buy: 1190 },
+    { name: "Pulltab", cat: "Metal Detecting", buy: 29.75 },
+    { name: "Quarter", cat: "Metal Detecting", buy: 510 },
+    { name: "Relic Revolver", cat: "Metal Detecting", buy: 680 },
+    { name: "Rusty Ball", cat: "Metal Detecting", buy: 38.25 },
+    { name: "Rusty Iron Ball", cat: "Metal Detecting", buy: 46.75 },
+    { name: "Rusty Junk", cat: "Metal Detecting", buy: 59.50 },
+    { name: "Rusty Nails", cat: "Metal Detecting", buy: 76.50 },
+    { name: "Rusty Pliers", cat: "Metal Detecting", buy: 93.50 },
+    { name: "Rusty Ring", cat: "Metal Detecting", buy: 170 },
+    { name: "Rusty Scissors", cat: "Metal Detecting", buy: 187 },
+    { name: "Rusty Screwdriver", cat: "Metal Detecting", buy: 195.50 },
+    { name: "Rusty Spring", cat: "Metal Detecting", buy: 212.50 },
+    { name: "Screw", cat: "Metal Detecting", buy: 229.50 },
+    { name: "Silver Dime", cat: "Metal Detecting", buy: 552.50 },
+    { name: "Silver Earrings (Metal)", cat: "Metal Detecting", buy: 850 },
+    { name: "Silver Ounce", cat: "Metal Detecting", buy: 1020 },
+    { name: "Silver Ring (Metal)", cat: "Metal Detecting", buy: 850 },
+    { name: "Wheat Penny", cat: "Metal Detecting", buy: 238 }
+  ];
+
+  const sellItems = [
+    { name: "Advanced Drill", cat: "Heist Gear", price: 20000 },
+    { name: "Advanced Lockpick", cat: "Heist Gear", price: 4000 },
+    { name: "Ammunation Pass", cat: "Heist Gear", price: 5000 },
+    { name: "Big Drill", cat: "Heist Gear", price: 20000 },
+    { name: "Blue Bag", cat: "Heist Gear", price: 6500 },
+    { name: "Bolt Cutter", cat: "Heist Gear", price: 16000 },
+    { name: "C4 Bomb", cat: "Heist Gear", price: 90000 },
+    { name: "Crowbar", cat: "Heist Gear", price: 6500 },
+    { name: "Cutter", cat: "Heist Gear", price: 25000 },
+    { name: "Drill", cat: "Heist Gear", price: 8000 },
+    { name: "Duct Tape", cat: "Heist Gear", price: 3000 },
+    { name: "Door Lockpick", cat: "Heist Gear", price: 20000 },
+    { name: "Gas Cutter", cat: "Heist Gear", price: 20000 },
+    { name: "Gatecrack", cat: "Heist Gear", price: 8000 },
+    { name: "Gold Laptop", cat: "Heist Gear", price: 30000 },
+    { name: "Green Laptop", cat: "Heist Gear", price: 25000 },
+    { name: "Hacking Device", cat: "Heist Gear", price: 14000 },
+    { name: "Large Drill", cat: "Heist Gear", price: 20000 },
+    { name: "Lockpick", cat: "Heist Gear", price: 1500 },
+    { name: "PD Pass (Tier 1)", cat: "Heist Gear", price: 10000 },
+    { name: "PD Pass (Tier 2)", cat: "Heist Gear", price: 5000 },
+    { name: "Plasma Cutter", cat: "Heist Gear", price: 15000 },
+    { name: "Software USB", cat: "Heist Gear", price: 3000 },
+    { name: "Thermite", cat: "Heist Gear", price: 20000 },
+    { name: "USB Pink", cat: "Heist Gear", price: 9000 }
+  ];
+
+  buyItems.forEach(i => i.qty = 0);
+  sellItems.forEach(i => i.qty = 0);
+
+  const categoriesBuy = ["all", "Jewelry", "Electronics", "Eggs", "Metal Detecting", "Relics & Art", "Miscellaneous"];
+  const categoriesSell = ["all", "Heist Gear"];
+
+  const btnModeBuy = document.getElementById("btnModeBuy");
+  const btnModeSell = document.getElementById("btnModeSell");
+  const staffSelect = document.getElementById("staffSelect");
+  const lblPrimary = document.getElementById("lblPrimary");
+  const valPrimary = document.getElementById("valPrimary");
+  const boxSecondary = document.getElementById("boxSecondary");
+  const lblSecondary = document.getElementById("lblSecondary");
+  const valSecondary = document.getElementById("valSecondary");
+  const categoryContainer = document.getElementById("categoryContainer");
+  const tableHeaderRow = document.getElementById("tableHeaderRow");
+  const tableBody = document.getElementById("itemsTableBody");
+  const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("sortSelect");
+  const resetBtn = document.getElementById("resetBtn");
+  const confirmBtn = document.getElementById("confirmBtn");
+
+  function formatCurrency(num) {
+    return "$" + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function setupCategoryTabs() {
+    categoryContainer.innerHTML = "";
+    const cats = activeMode === "BUY" ? categoriesBuy : categoriesSell;
+    
+    cats.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = `tab-btn ${cat === currentCategory ? 'active' : ''}`;
+      btn.innerText = cat === "all" ? "All Items" : cat;
+      btn.setAttribute("data-cat", cat);
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = cat;
+        renderTable();
+      });
+      categoryContainer.appendChild(btn);
+    });
+  }
+
+  function setupHeaderAndStats() {
+    if (activeMode === "BUY") {
+      btnModeBuy.className = "mode-btn active-buy";
+      btnModeSell.className = "mode-btn";
+      lblPrimary.innerText = "Total Buying Price";
+      valPrimary.className = "buy-total";
+      boxSecondary.style.display = "block";
+      lblSecondary.innerText = "Employee Commission (5%)";
+      valSecondary.className = "seller-profit";
+    } else {
+      btnModeSell.className = "mode-btn active-sell";
+      btnModeBuy.className = "mode-btn";
+      lblPrimary.innerText = "Total Selling Price";
+      valPrimary.className = "sell-total";
+      boxSecondary.style.display = "none";
+    }
+  }
+
+  function updateTotals() {
+    if (activeMode === "BUY") {
+      const totalBuy = buyItems.reduce((acc, i) => acc + (i.qty * i.buy), 0);
+      const commission = totalBuy * 0.05;
+      valPrimary.innerText = formatCurrency(totalBuy);
+      valSecondary.innerText = formatCurrency(commission);
+    } else {
+      const totalSell = sellItems.reduce((acc, i) => acc + (i.qty * i.price), 0);
+      valPrimary.innerText = formatCurrency(totalSell);
+    }
+  }
+
+  function getFilteredItems() {
+    const list = activeMode === "BUY" ? buyItems : sellItems;
+    
+    return list.filter(item => {
+      const matchesCat = (currentCategory === "all") || (item.cat === currentCategory);
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCat && matchesSearch;
+    }).sort((a, b) => {
+      const priceA = activeMode === "BUY" ? a.buy : a.price;
+      const priceB = activeMode === "BUY" ? b.buy : b.price;
+      
+      if (currentSort === "alpha-asc") return a.name.localeCompare(b.name);
+      if (currentSort === "alpha-desc") return b.name.localeCompare(a.name);
+      if (currentSort === "price-asc") return priceA - priceB;
+      if (currentSort === "price-desc") return priceB - priceA;
+      return 0;
+    });
+  }
+
+  function renderTable() {
+    tableHeaderRow.innerHTML = "";
+    tableBody.innerHTML = "";
+
+    if (activeMode === "BUY") {
+      tableHeaderRow.innerHTML = `
+        <th>Item Name</th>
+        <th>Category</th>
+        <th>Buy Price</th>
+        <th style="text-align:center;">Quantity</th>
+        <th style="text-align:right;">Subtotal</th>
+      `;
+    } else {
+      tableHeaderRow.innerHTML = `
+        <th>Item Name</th>
+        <th>Category</th>
+        <th>Selling Price</th>
+        <th style="text-align:center;">Quantity</th>
+        <th style="text-align:right;">Subtotal</th>
+      `;
+    }
+
+    const items = getFilteredItems();
+
+    items.forEach(item => {
+      const tr = document.createElement("tr");
+
+      if (activeMode === "BUY") {
+        const subtotal = item.qty * item.buy;
+        tr.innerHTML = `
+          <td><span class="item-name">${item.name}</span></td>
+          <td><span class="category-badge">${item.cat}</span></td>
+          <td><span class="price-tag">${formatCurrency(item.buy)}</span></td>
+          <td style="text-align:center;">
+            <input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0">
+          </td>
+          <td style="text-align:right;"><span class="item-total buy">${formatCurrency(subtotal)}</span></td>
+        `;
+
+        const input = tr.querySelector(".qty-input");
+        input.addEventListener("input", (e) => {
+          item.qty = Math.max(0, parseInt(e.target.value) || 0);
+          tr.querySelector(".item-total").innerText = formatCurrency(item.qty * item.buy);
+          updateTotals();
+        });
+
+      } else {
+        const subtotal = item.qty * item.price;
+        tr.innerHTML = `
+          <td><span class="item-name">${item.name}</span></td>
+          <td><span class="category-badge">${item.cat}</span></td>
+          <td><span class="price-tag">${formatCurrency(item.price)}</span></td>
+          <td style="text-align:center;">
+            <input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0">
+          </td>
+          <td style="text-align:right;"><span class="item-total sell">${formatCurrency(subtotal)}</span></td>
+        `;
+
+        const input = tr.querySelector(".qty-input");
+        input.addEventListener("input", (e) => {
+          item.qty = Math.max(0, parseInt(e.target.value) || 0);
+          tr.querySelector(".item-total").innerText = formatCurrency(item.qty * item.price);
+          updateTotals();
+        });
+      }
+
+      tableBody.appendChild(tr);
+    });
+  }
+
+  btnModeBuy.addEventListener("click", () => {
+    if (activeMode !== "BUY") {
+      activeMode = "BUY";
+      currentCategory = "all";
+      setupHeaderAndStats();
+      setupCategoryTabs();
+      renderTable();
+      updateTotals();
+    }
+  });
+
+  btnModeSell.addEventListener("click", () => {
+    if (activeMode !== "SELL") {
+      activeMode = "SELL";
+      currentCategory = "all";
+      setupHeaderAndStats();
+      setupCategoryTabs();
+      renderTable();
+      updateTotals();
+    }
+  });
+
+  searchInput.addEventListener("input", (e) => {
+    searchQuery = e.target.value;
+    renderTable();
+  });
+
+  sortSelect.addEventListener("change", (e) => {
+    currentSort = e.target.value;
+    renderTable();
+  });
+
+  resetBtn.addEventListener("click", () => {
+    buyItems.forEach(i => i.qty = 0);
+    sellItems.forEach(i => i.qty = 0);
+    searchInput.value = "";
+    searchQuery = "";
+    renderTable();
+    updateTotals();
+  });
+
+  // HELPER FUNCTION: SEND DATA TO GOOGLE SHEETS
+  async function sendToGoogleSheet(staffName, mode, totalPrice, commissionAmount) {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+      console.warn("Google Sheet Web App URL not configured.");
+      return;
+    }
+
+    const payload = {
+      staff: staffName,
+      type: mode === "BUY" ? "Buying" : "Selling",
+      total: totalPrice,
+      commission: mode === "BUY" ? commissionAmount : 0
+    };
+
+    try {
+      await fetch(GOOGLE_SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      console.error("Failed logging transaction to Google Sheet:", err);
+    }
+  }
+
+  confirmBtn.addEventListener("click", async () => {
+    const staffName = staffSelect.value;
+    const activeList = activeMode === "BUY" ? buyItems : sellItems;
+    const selectedItems = activeList.filter(i => i.qty > 0);
+
+    if (selectedItems.length === 0) {
+      alert("Please enter a quantity for at least one item before confirming.");
+      return;
+    }
+
+    let embedTitle = "";
+    let embedColor = 0;
+    let fields = [];
+    let grandTotal = 0;
+
+    if (activeMode === "BUY") {
+      embedTitle = `🍓 Strawberry Pawn - Customer Buyout Transaction`;
+      embedColor = 16711765;
+      
+      let itemLines = selectedItems.map(i => {
+        const lineTotal = i.qty * i.buy;
+        grandTotal += lineTotal;
+        return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)} (${formatCurrency(i.buy)} ea)`;
+      }).join("\n");
+
+      const commission = grandTotal * 0.05;
+
+      fields = [
+        { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "💼 Transaction Type", value: "Buying From Customer", inline: true },
+        { name: "💵 Total Buying Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
+        { name: "💰 Employee Commission (5%)", value: `**${formatCurrency(commission)}**`, inline: false },
+        { name: "📦 Items Received", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
+      ];
+    } else {
+      embedTitle = `⚡ Strawberry Pawn - Heist Gear Sale`;
+      embedColor = 16711807;
+
+      let itemLines = selectedItems.map(i => {
+        const lineTotal = i.qty * i.price;
+        grandTotal += lineTotal;
+        return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)} (${formatCurrency(i.price)} ea)`;
+      }).join("\n");
+
+      fields = [
+        { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "💼 Transaction Type", value: "Selling To Customer", inline: true },
+        { name: "💵 Total Selling Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
+        { name: "📦 Items Sold", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
+      ];
+    }
+
+    const payload = {
+      username: "Strawberry Pawnshop Calculator",
+      embeds: [{
+        title: embedTitle,
+        color: embedColor,
+        fields: fields,
+        timestamp: new Date().toISOString(),
+        footer: { text: "Strawberry Pawnshop | Logged via Calculator" }
+      }]
+    };
+
+    try {
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = "Sending...";
+
+      // Send to Google Sheet in background
+      const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
+      sendToGoogleSheet(staffName, activeMode, grandTotal, currentCommission);
+
+      // Build target list of webhooks to send to
+      const targets = [MAIN_SALES_WEBHOOK];
+      const individualWebhook = STAFF_WEBHOOKS[staffName];
+
+      // Send to individual staff webhook ONLY when buying from customers
+      if (activeMode === "BUY" && individualWebhook && individualWebhook.startsWith("http")) {
+        targets.push(individualWebhook);
+      }
+
+      // Execute dispatch requests simultaneously
+      const requests = targets.map(url =>
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+      );
+
+      const responses = await Promise.all(requests);
+      const allSuccess = responses.every(res => res.ok);
+
+      if (allSuccess) {
+        alert(`Transaction logged successfully to Discord & Google Sheet for ${staffName}!`);
+        buyItems.forEach(i => i.qty = 0);
+        sellItems.forEach(i => i.qty = 0);
+        renderTable();
+        updateTotals();
+      } else {
+        alert("Transaction posted to Google Sheet & main sales channel, but failed to post to the individual staff member channel. Check your webhook URLs.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting transaction. Check browser console for details.");
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.innerText = "Confirm Send";
+    }
+  });
+
+  setupHeaderAndStats();
+  setupCategoryTabs();
+  renderTable();
+  updateTotals();
+</script>
+
+</body>
+</html>
