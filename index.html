@@ -253,7 +253,7 @@
 
     .staff-container {
       flex: 1;
-      min-width: 200px;
+      min-width: 170px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -273,7 +273,7 @@
       margin-bottom: 2px;
     }
 
-    .staff-select {
+    .staff-select, .customer-input {
       background: transparent;
       border: none;
       color: #fff;
@@ -281,7 +281,12 @@
       font-size: 1.2rem;
       font-weight: 700;
       outline: none;
-      cursor: pointer;
+      width: 100%;
+    }
+
+    .customer-input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+      font-weight: 500;
     }
 
     .staff-select option {
@@ -529,8 +534,12 @@
           <option value="Cody">Cody</option>
           <option value="Miguel">Miguel</option>
           <option value="Kyle">Kyle</option>
-          
         </select>
+      </div>
+
+      <div class="staff-container" style="border: 1px solid rgba(255,0,85,0.4);">
+        <label for="customerInput">🏆 Client / Customer Name</label>
+        <input type="text" id="customerInput" class="customer-input" placeholder="e.g. John Doe / Org">
       </div>
     </div>
 
@@ -580,14 +589,10 @@
   // INDIVIDUAL STAFF CHANNEL WEBHOOKS
   const STAFF_WEBHOOKS = {
     "Lexi": "https://discord.com/api/webhooks/1556327580863307829/mOBUxLRCKucP4yTVk4Rc1K75PGVS8JqgQNYEdraYdDGXO3SJCm6Yfjsc9W8OlpLqHyb-",
-    
-"Xander": "https://discord.com/api/webhooks/1556351784530878554/gXFQsjAij1eNnXqXdsPeWs99W9HaiFUAaxPJR5oADchIg4Ciq75eBPx0rx6Yta4E-2wI",
-    
-"Cody": "https://discord.com/api/webhooks/1556325247379054596/pgkzs4aTQxF4ouXl2AR50Lm_p32gtdme_RuOtmGEQsuFyskJgbkbh9HBb3p3i8rw37zk",
-    
-"Miguel": "https://discord.com/api/webhooks/1556326357837815951/L9PenftlgpfDuZgJT228e4XDitT-PJNtHEwQOZqICV6SalS-sF5kKadF-TvPr_yBlTll",
-    
-"Kyle": "https://discord.com/api/webhooks/1556613687333224510/_xNUBQL_8s1u2kx1iXviiEac6Jr0-HZUQCmoNjDG5BDw6-J9AdQe9n-WoNkAXDYoyRZM",
+    "Xander": "https://discord.com/api/webhooks/1556351784530878554/gXFQsjAij1eNnXqXdsPeWs99W9HaiFUAaxPJR5oADchIg4Ciq75eBPx0rx6Yta4E-2wI",
+    "Cody": "https://discord.com/api/webhooks/1556325247379054596/pgkzs4aTQxF4ouXl2AR50Lm_p32gtdme_RuOtmGEQsuFyskJgbkbh9HBb3p3i8rw37zk",
+    "Miguel": "https://discord.com/api/webhooks/1556326357837815951/L9PenftlgpfDuZgJT228e4XDitT-PJNtHEwQOZqICV6SalS-sF5kKadF-TvPr_yBlTll",
+    "Kyle": "https://discord.com/api/webhooks/1556613687333224510/_xNUBQL_8s1u2kx1iXviiEac6Jr0-HZUQCmoNjDG5BDw6-J9AdQe9n-WoNkAXDYoyRZM"
   };
 
   const buyItems = [
@@ -795,6 +800,7 @@
   const btnModeBuy = document.getElementById("btnModeBuy");
   const btnModeSell = document.getElementById("btnModeSell");
   const staffSelect = document.getElementById("staffSelect");
+  const customerInput = document.getElementById("customerInput");
   const lblPrimary = document.getElementById("lblPrimary");
   const valPrimary = document.getElementById("valPrimary");
   const boxSecondary = document.getElementById("boxSecondary");
@@ -986,13 +992,14 @@
     buyItems.forEach(i => i.qty = 0);
     sellItems.forEach(i => i.qty = 0);
     searchInput.value = "";
+    customerInput.value = "";
     searchQuery = "";
     renderTable();
     updateTotals();
   });
 
   // HELPER FUNCTION: SEND DATA TO GOOGLE SHEETS
-  async function sendToGoogleSheet(staffName, mode, totalPrice, commissionAmount) {
+  async function sendToGoogleSheet(staffName, customerName, mode, totalPrice, commissionAmount) {
     if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
       console.warn("Google Sheet Web App URL not configured.");
       return;
@@ -1000,6 +1007,7 @@
 
     const payload = {
       staff: staffName,
+      customer: customerName,
       type: mode === "BUY" ? "Buying" : "Selling",
       total: totalPrice,
       commission: mode === "BUY" ? commissionAmount : 0
@@ -1019,6 +1027,7 @@
 
   confirmBtn.addEventListener("click", async () => {
     const staffName = staffSelect.value;
+    const customerName = customerInput.value.trim() || "Walk-In / Unknown";
     const activeList = activeMode === "BUY" ? buyItems : sellItems;
     const selectedItems = activeList.filter(i => i.qty > 0);
 
@@ -1046,6 +1055,7 @@
 
       fields = [
         { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "🏎️ Customer / Client", value: `**${customerName}**`, inline: true },
         { name: "💼 Transaction Type", value: "Buying From Customer", inline: true },
         { name: "💵 Total Buying Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
         { name: "💰 Employee Commission (5%)", value: `**${formatCurrency(commission)}**`, inline: false },
@@ -1063,6 +1073,7 @@
 
       fields = [
         { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "🏎️ Customer / Client", value: `**${customerName}**`, inline: true },
         { name: "💼 Transaction Type", value: "Selling To Customer", inline: true },
         { name: "💵 Total Selling Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
         { name: "📦 Items Sold", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
@@ -1086,7 +1097,7 @@
 
       // Send to Google Sheet in background
       const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
-      sendToGoogleSheet(staffName, activeMode, grandTotal, currentCommission);
+      sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, currentCommission);
 
       // Build target list of webhooks to send to
       const targets = [MAIN_SALES_WEBHOOK];
@@ -1113,6 +1124,7 @@
         alert(`Transaction logged successfully to Discord & Google Sheet for ${staffName}!`);
         buyItems.forEach(i => i.qty = 0);
         sellItems.forEach(i => i.qty = 0);
+        customerInput.value = "";
         renderTable();
         updateTotals();
       } else {
