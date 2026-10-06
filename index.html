@@ -1095,7 +1095,7 @@
       confirmBtn.disabled = true;
       confirmBtn.innerText = "Sending...";
 
-      // Send to Google Sheet in background
+      // Send to Google Sheet in background (WITH customerName included)
       const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
       sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, currentCommission);
 
