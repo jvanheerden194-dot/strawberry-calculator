@@ -1027,6 +1027,7 @@
 
   confirmBtn.addEventListener("click", async () => {
     const staffName = staffSelect.value;
+    const customerName = customerInput.value.trim() || "Walk-In / Unknown";
     const activeList = activeMode === "BUY" ? buyItems : sellItems;
     const selectedItems = activeList.filter(i => i.qty > 0);
 
@@ -1054,6 +1055,7 @@
 
       fields = [
         { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "🏎️ Customer / Client", value: `**${customerName}**`, inline: true },
         { name: "💼 Transaction Type", value: "Buying From Customer", inline: true },
         { name: "💵 Total Buying Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
         { name: "💰 Employee Commission (5%)", value: `**${formatCurrency(commission)}**`, inline: false },
@@ -1071,6 +1073,7 @@
 
       fields = [
         { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "🏎️ Customer / Client", value: `**${customerName}**`, inline: true },
         { name: "💼 Transaction Type", value: "Selling To Customer", inline: true },
         { name: "💵 Total Selling Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
         { name: "📦 Items Sold", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
@@ -1092,20 +1095,18 @@
       confirmBtn.disabled = true;
       confirmBtn.innerText = "Sending...";
 
-      // Send to Google Sheet in background
+      // Send transaction details to Google Sheet
       const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
-      sendToGoogleSheet(staffName, activeMode, grandTotal, currentCommission);
+      sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, currentCommission);
 
-      // Build target list of webhooks to send to
+      // Dispatch Discord webhooks
       const targets = [MAIN_SALES_WEBHOOK];
       const individualWebhook = STAFF_WEBHOOKS[staffName];
 
-      // Send to individual staff webhook ONLY when buying from customers
       if (activeMode === "BUY" && individualWebhook && individualWebhook.startsWith("http")) {
         targets.push(individualWebhook);
       }
 
-      // Execute dispatch requests simultaneously
       const requests = targets.map(url =>
         fetch(url, {
           method: "POST",
@@ -1118,17 +1119,18 @@
       const allSuccess = responses.every(res => res.ok);
 
       if (allSuccess) {
-        alert(`Transaction logged successfully to Discord & Google Sheet for ${staffName}!`);
+        alert(`Transaction logged successfully for ${customerName}!`);
         buyItems.forEach(i => i.qty = 0);
         sellItems.forEach(i => i.qty = 0);
+        customerInput.value = "";
         renderTable();
         updateTotals();
       } else {
-        alert("Transaction posted to Google Sheet & main sales channel, but failed to post to the individual staff member channel. Check your webhook URLs.");
+        alert("Transaction posted to Google Sheet & main sales channel, but failed on staff channel.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error submitting transaction. Check browser console for details.");
+      alert("Error submitting transaction. Check browser console.");
     } finally {
       confirmBtn.disabled = false;
       confirmBtn.innerText = "Confirm Send";
