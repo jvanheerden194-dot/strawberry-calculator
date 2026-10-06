@@ -1026,53 +1026,114 @@
   }
 
   confirmBtn.addEventListener("click", async () => {
-  const staffName = staffSelect.value;
-  const customerName = customerInput.value.trim() || "Walk-In / Unknown";
-  const activeList = activeMode === "BUY" ? buyItems : sellItems;
-  const selectedItems = activeList.filter(i => i.qty > 0);
+    const staffName = staffSelect.value;
+    const activeList = activeMode === "BUY" ? buyItems : sellItems;
+    const selectedItems = activeList.filter(i => i.qty > 0);
 
-  if (selectedItems.length === 0) {
-    alert("Please enter a quantity for at least one item before confirming.");
-    return;
-  }
+    if (selectedItems.length === 0) {
+      alert("Please enter a quantity for at least one item before confirming.");
+      return;
+    }
 
-  const grandTotal = selectedItems.reduce((sum, i) => sum + (i.qty * (activeMode === "BUY" ? i.buy : i.price)), 0);
-  const commission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
+    let embedTitle = "";
+    let embedColor = 0;
+    let fields = [];
+    let grandTotal = 0;
 
-  try {
-    confirmBtn.disabled = true;
-    confirmBtn.innerText = "Sending...";
+    if (activeMode === "BUY") {
+      embedTitle = `🍓 Strawberry Pawn - Customer Buyout Transaction`;
+      embedColor = 16711765;
+      
+      let itemLines = selectedItems.map(i => {
+        const lineTotal = i.qty * i.buy;
+        grandTotal += lineTotal;
+        return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)} (${formatCurrency(i.buy)} ea)`;
+      }).join("\n");
 
-    const formData = new URLSearchParams();
-    formData.append("staff", staffName);
-    formData.append("customer", customerName);
-    formData.append("type", activeMode === "BUY" ? "Buying" : "Selling");
-    formData.append("total", grandTotal);
-    formData.append("commission", commission);
-    formData.append("items", JSON.stringify(selectedItems));
+      const commission = grandTotal * 0.05;
 
-    await fetch(GOOGLE_SHEET_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData.toString()
-    });
+      fields = [
+        { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "💼 Transaction Type", value: "Buying From Customer", inline: true },
+        { name: "💵 Total Buying Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
+        { name: "💰 Employee Commission (5%)", value: `**${formatCurrency(commission)}**`, inline: false },
+        { name: "📦 Items Received", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
+      ];
+    } else {
+      embedTitle = `⚡ Strawberry Pawn - Heist Gear Sale`;
+      embedColor = 16711807;
 
-    alert(`Transaction logged successfully for ${customerName}!`);
-    buyItems.forEach(i => i.qty = 0);
-    sellItems.forEach(i => i.qty = 0);
-    customerInput.value = "";
-    renderTable();
-    updateTotals();
+      let itemLines = selectedItems.map(i => {
+        const lineTotal = i.qty * i.price;
+        grandTotal += lineTotal;
+        return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)} (${formatCurrency(i.price)} ea)`;
+      }).join("\n");
 
-  } catch (err) {
-    console.error(err);
-    alert("Error submitting transaction. Check browser console.");
-  } finally {
-    confirmBtn.disabled = false;
-    confirmBtn.innerText = "Confirm Send";
-  }
-});
+      fields = [
+        { name: "👤 Staff Member", value: staffName, inline: true },
+        { name: "💼 Transaction Type", value: "Selling To Customer", inline: true },
+        { name: "💵 Total Selling Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
+        { name: "📦 Items Sold", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
+      ];
+    }
+
+    const payload = {
+      username: "Strawberry Pawnshop Calculator",
+      embeds: [{
+        title: embedTitle,
+        color: embedColor,
+        fields: fields,
+        timestamp: new Date().toISOString(),
+        footer: { text: "Strawberry Pawnshop | Logged via Calculator" }
+      }]
+    };
+
+    try {
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = "Sending...";
+
+      // Send to Google Sheet in background
+      const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
+      sendToGoogleSheet(staffName, activeMode, grandTotal, currentCommission);
+
+      // Build target list of webhooks to send to
+      const targets = [MAIN_SALES_WEBHOOK];
+      const individualWebhook = STAFF_WEBHOOKS[staffName];
+
+      // Send to individual staff webhook ONLY when buying from customers
+      if (activeMode === "BUY" && individualWebhook && individualWebhook.startsWith("http")) {
+        targets.push(individualWebhook);
+      }
+
+      // Execute dispatch requests simultaneously
+      const requests = targets.map(url =>
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+      );
+
+      const responses = await Promise.all(requests);
+      const allSuccess = responses.every(res => res.ok);
+
+      if (allSuccess) {
+        alert(`Transaction logged successfully to Discord & Google Sheet for ${staffName}!`);
+        buyItems.forEach(i => i.qty = 0);
+        sellItems.forEach(i => i.qty = 0);
+        renderTable();
+        updateTotals();
+      } else {
+        alert("Transaction posted to Google Sheet & main sales channel, but failed to post to the individual staff member channel. Check your webhook URLs.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting transaction. Check browser console for details.");
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.innerText = "Confirm Send";
+    }
+  });
 
   setupHeaderAndStats();
   setupCategoryTabs();
