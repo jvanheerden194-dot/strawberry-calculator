@@ -583,17 +583,8 @@
   // GOOGLE APPS SCRIPT URL
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx7dPOEAoa1gnUa7ZNl1ZL_r73en8DJVIW2Gj5tEzKX3pfuHR98ZjEtaruOcqLZOlCafQ/exec";
 
-  // MAIN SALES CHANNEL WEBHOOK
-  const MAIN_SALES_WEBHOOK = "https://discord.com/api/webhooks/1557070279761592330/mc6hZJFNYg-KF5bCY_Jclq04Od6invcCUZhOODuVa07UDvCuB6yLN_6Ph0CBWY7r5DCN";
-
-  // INDIVIDUAL STAFF CHANNEL WEBHOOKS
-  const STAFF_WEBHOOKS = {
-    "Lexi": "https://discord.com/api/webhooks/1557080197981798410/Dg4FUP-xg3da2jO6ot56jKFzP9YQPf4vdNWxEOmBbehpwOIiGyRWcSzTPncIkJh4-1fS",
-    "Xander": "https://discord.com/api/webhooks/1557084040761450516/jTsKRhjco4yCjTGEDR0qQp6uN25XYPbO47KaJtnxs67XMiBvB8JzYkw3KGZXR0N249On",
-    "Cody": "https://discord.com/api/webhooks/1556325247379054596/pgkzs4aTQxF4ouXl2AR50Lm_p32gtdme_RuOtmGEQsuFyskJgbkbh9HBb3p3i8rw37zk",
-    "Miguel": "https://discord.com/api/webhooks/1556326357837815951/L9PenftlgpfDuZgJT228e4XDitT-PJNtHEwQOZqICV6SalS-sF5kKadF-TvPr_yBlTll",
-    "Kyle": "https://discord.com/api/webhooks/1556613687333224510/_xNUBQL_8s1u2kx1iXviiEac6Jr0-HZUQCmoNjDG5BDw6-J9AdQe9n-WoNkAXDYoyRZM"
-  };
+  // CLOUDFLARE PROXY URL (REPLACE WITH YOUR CLOUDFLARE WORKER ADDRESS)
+  const CLOUDFLARE_PROXY_URL = "https://strawberry-webhook.yourname.workers.dev";
 
   const buyItems = [
     { name: "Asylum Gold Egg", cat: "Eggs", buy: 82500 },
@@ -1000,10 +991,7 @@
 
   // HELPER FUNCTION: SEND DATA TO GOOGLE SHEETS
   async function sendToGoogleSheet(staffName, customerName, mode, totalPrice, commissionAmount) {
-    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-      console.warn("Google Sheet Web App URL not configured.");
-      return;
-    }
+    if (!GOOGLE_SHEET_URL) return;
 
     const payload = {
       staff: staffName,
@@ -1095,30 +1083,18 @@
       confirmBtn.disabled = true;
       confirmBtn.innerText = "Sending...";
 
-      // Send transaction details to Google Sheet
+      // 1. Send transaction details to Google Sheet
       const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
       sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, currentCommission);
 
-      // Dispatch Discord webhooks
-      const targets = [MAIN_SALES_WEBHOOK];
-      const individualWebhook = STAFF_WEBHOOKS[staffName];
+      // 2. Send transaction payload to Cloudflare Worker Proxy
+      const res = await fetch(CLOUDFLARE_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-      if (activeMode === "BUY" && individualWebhook && individualWebhook.startsWith("http")) {
-        targets.push(individualWebhook);
-      }
-
-      const requests = targets.map(url =>
-        fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-      );
-
-      const responses = await Promise.all(requests);
-      const allSuccess = responses.every(res => res.ok);
-
-      if (allSuccess) {
+      if (res.ok) {
         alert(`Transaction logged successfully for ${customerName}!`);
         buyItems.forEach(i => i.qty = 0);
         sellItems.forEach(i => i.qty = 0);
@@ -1126,7 +1102,7 @@
         renderTable();
         updateTotals();
       } else {
-        alert("Transaction posted to Google Sheet & main sales channel, but failed on staff channel.");
+        alert("Transaction logged to Google Sheet, but Cloudflare Proxy failed to deliver Discord message.");
       }
     } catch (err) {
       console.error(err);
