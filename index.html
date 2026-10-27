@@ -12,13 +12,9 @@
       --bg-dark: #0d0205;
       --bg-card: rgba(45, 8, 22, 0.88);
       --bg-panel: rgba(32, 5, 14, 0.95);
-      
-      /* Strawberry Palette: Red, Pink, Black */
       --strawberry-red: #ff0055;
       --strawberry-pink: #ff007f;
       --pink-glow: #ff529a;
-      --pink-soft: #ffb6c1;
-      
       --text-white: #fff0f5;
       --text-muted: #b37f93;
       --success: #00ffaa;
@@ -58,7 +54,6 @@
     ::-webkit-scrollbar-thumb {
       background: var(--strawberry-red);
       border-radius: 4px;
-      box-shadow: 0 0 10px var(--strawberry-red);
     }
 
     .tablet-device {
@@ -81,9 +76,6 @@
       overflow-y: auto;
       position: relative;
       z-index: 1;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 90% 80%, rgba(255, 0, 127, 0.18) 0%, transparent 50%);
     }
 
     .tablet-home-bar {
@@ -92,8 +84,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
-      z-index: 2;
     }
 
     .home-pill {
@@ -101,7 +91,6 @@
       height: 5px;
       background: rgba(255, 0, 85, 0.5);
       border-radius: 4px;
-      box-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
     }
 
     .hud-box {
@@ -112,12 +101,7 @@
     }
 
     .hud-corner {
-      clip-path: polygon(
-        0 0, 
-        calc(100% - 15px) 0, 100% 15px, 
-        100% 100%, 
-        15px 100%, 0 calc(100% - 15px)
-      );
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
     }
 
     .branding-bar {
@@ -130,12 +114,6 @@
       margin-bottom: 18px;
     }
 
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
     .logo-container h1 {
       font-family: 'Montserrat', sans-serif;
       font-size: 2.2rem;
@@ -143,7 +121,6 @@
       font-style: italic;
       line-height: 0.95;
       text-transform: uppercase;
-      letter-spacing: -1px;
       color: #ffffff;
     }
 
@@ -165,12 +142,6 @@
       border-radius: 12px;
       text-align: right;
       min-width: 175px;
-      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 12px rgba(255, 0, 85, 0.15);
-      transition: transform 0.2s ease;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
     }
 
     .stat-card span {
@@ -178,27 +149,16 @@
       font-size: 0.72rem;
       text-transform: uppercase;
       color: var(--text-muted);
-      letter-spacing: 1.2px;
     }
 
     .stat-card strong {
       font-family: 'Chakra Petch', sans-serif;
       font-size: 1.7rem;
-      font-weight: 700;
     }
 
-    .stat-card strong.buy-total { 
-      color: var(--strawberry-red);
-      text-shadow: 0 0 15px rgba(255, 0, 85, 0.8);
-    }
-    .stat-card strong.sell-total { 
-      color: var(--pink-glow);
-      text-shadow: 0 0 15px rgba(255, 82, 154, 0.8);
-    }
-    .stat-card strong.seller-profit { 
-      color: var(--success);
-      text-shadow: 0 0 15px rgba(0, 255, 170, 0.8);
-    }
+    .stat-card strong.buy-total { color: var(--strawberry-red); }
+    .stat-card strong.sell-total { color: var(--pink-glow); }
+    .stat-card strong.seller-profit { color: var(--success); }
 
     .mode-nav {
       display: flex;
@@ -219,48 +179,34 @@
       font-size: 0.95rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: all 0.25s ease;
-      backdrop-filter: blur(8px);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .mode-btn:hover {
-      color: #fff;
-      box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
-      transform: translateY(-2px);
     }
 
     .mode-btn.active-buy {
       background: linear-gradient(135deg, rgba(255, 0, 85, 0.35) 0%, rgba(255, 0, 127, 0.3) 100%);
       color: #ffffff;
-      box-shadow: 0 0 30px rgba(255, 0, 85, 0.5), inset 0 0 15px rgba(255, 0, 85, 0.3);
-      text-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
     }
 
     .mode-btn.active-sell {
       background: linear-gradient(135deg, rgba(255, 0, 127, 0.35) 0%, rgba(255, 82, 154, 0.25) 100%);
       color: #ffffff;
-      box-shadow: 0 0 30px rgba(255, 0, 127, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.3);
-      text-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+      box-shadow: 0 0 30px rgba(255, 0, 127, 0.5);
     }
 
     .staff-container {
-      flex: 1;
-      min-width: 170px;
+      flex: 2;
+      min-width: 220px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       background: var(--bg-card);
       padding: 8px 16px;
       border-radius: 14px;
-      backdrop-filter: blur(8px);
     }
 
     .staff-container label {
@@ -268,12 +214,11 @@
       font-size: 0.68rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
       color: var(--strawberry-red);
       margin-bottom: 2px;
     }
 
-    .staff-select, .customer-input {
+    .staff-select {
       background: transparent;
       border: none;
       color: #fff;
@@ -282,11 +227,6 @@
       font-weight: 700;
       outline: none;
       width: 100%;
-    }
-
-    .customer-input::placeholder {
-      color: rgba(255, 255, 255, 0.35);
-      font-weight: 500;
     }
 
     .staff-select option {
@@ -317,9 +257,7 @@
       border-radius: 10px;
       font-family: 'Rajdhani', sans-serif;
       font-size: 1.05rem;
-      font-weight: 600;
       outline: none;
-      transition: all 0.2s ease;
     }
 
     .search-sort-row input {
@@ -327,22 +265,15 @@
       min-width: 200px;
     }
 
-    .search-sort-row input:focus, .search-sort-row select:focus {
-      box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
-      background: rgba(255, 0, 85, 0.05);
-    }
-
     .btn-action {
       font-family: 'Montserrat', sans-serif;
       font-size: 0.85rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1px;
       padding: 12px 22px;
       border-radius: 10px;
       border: none;
       cursor: pointer;
-      transition: all 0.25s ease;
     }
 
     .btn-reset {
@@ -350,21 +281,10 @@
       color: var(--text-muted);
     }
 
-    .btn-reset:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
-    }
-
     .btn-confirm {
       background: linear-gradient(135deg, var(--strawberry-red) 0%, var(--strawberry-pink) 100%);
       color: #0d0205;
       box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
-    }
-
-    .btn-confirm:hover {
-      box-shadow: 0 0 30px rgba(255, 0, 85, 0.9);
-      transform: scale(1.02);
     }
 
     .category-tabs {
@@ -383,18 +303,12 @@
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn:hover {
-      color: #fff;
     }
 
     .tab-btn.active {
       background: var(--strawberry-red);
       color: #0d0205;
       font-weight: 900;
-      box-shadow: 0 0 16px rgba(255, 0, 85, 0.7);
     }
 
     .table-container {
@@ -415,19 +329,12 @@
       font-size: 0.78rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
       padding: 14px 18px;
-      text-shadow: 0 0 10px rgba(255, 0, 85, 0.6);
     }
 
     td {
       padding: 12px 18px;
       vertical-align: middle;
-      transition: background 0.2s ease;
-    }
-
-    tr {
-      transition: all 0.2s ease;
     }
 
     tr:hover td {
@@ -443,20 +350,17 @@
       background: rgba(255, 0, 85, 0.1);
       color: var(--strawberry-red);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .item-name {
       font-size: 1.1rem;
       font-weight: 700;
       color: #ffffff;
-      letter-spacing: 0.3px;
     }
 
     .price-tag {
       font-family: 'Chakra Petch', sans-serif;
       font-size: 1.1rem;
-      font-weight: 700;
       color: var(--text-muted);
     }
 
@@ -467,17 +371,10 @@
       color: #fff;
       font-family: 'Chakra Petch', sans-serif;
       font-size: 1.15rem;
-      font-weight: 700;
       padding: 8px 10px;
       border-radius: 8px;
       text-align: center;
       outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .qty-input:focus {
-      box-shadow: 0 0 16px rgba(255, 0, 85, 0.7);
-      background: rgba(255, 0, 85, 0.1);
     }
 
     .item-total {
@@ -486,14 +383,8 @@
       font-weight: 700;
     }
 
-    .item-total.buy { 
-      color: var(--strawberry-red);
-      text-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
-    }
-    .item-total.sell { 
-      color: var(--pink-glow); 
-      text-shadow: 0 0 12px rgba(255, 82, 154, 0.6);
-    }
+    .item-total.buy { color: var(--strawberry-red); }
+    .item-total.sell { color: var(--pink-glow); }
   </style>
 </head>
 <body>
@@ -502,9 +393,7 @@
   <div class="tablet-screen">
     <div class="hud-box hud-corner branding-bar">
       <div class="logo-container">
-        <div>
-          <h1>Strawberry Pawnshop <span>Calculator</span></h1>
-        </div>
+        <h1>Strawberry Pawnshop <span>Calculator</span></h1>
       </div>
       <div class="status-boxes">
         <div class="stat-card" id="boxPrimary">
@@ -512,19 +401,15 @@
           <strong id="valPrimary" class="buy-total">$0.00</strong>
         </div>
         <div class="stat-card" id="boxSecondary">
-          <span id="lblSecondary">Employee Commission (5%)</span>
+          <span id="lblSecondary">Employee Commission (30% Profit)</span>
           <strong id="valSecondary" class="seller-profit">$0.00</strong>
         </div>
       </div>
     </div>
 
     <div class="mode-nav">
-      <button class="mode-btn active-buy" id="btnModeBuy">
-        🍓 Buying From Customers
-      </button>
-      <button class="mode-btn" id="btnModeSell">
-        ⚡ Selling To Customers (Heist Gear)
-      </button>
+      <button class="mode-btn active-buy" id="btnModeBuy">🍓 Buying From Customers</button>
+      <button class="mode-btn" id="btnModeSell">⚡ Selling To Customers (Heist Gear)</button>
       
       <div class="staff-container">
         <label for="staffSelect">👤 Staff Member</label>
@@ -533,19 +418,16 @@
           <option value="Xander">Xander</option>
           <option value="Cody">Cody</option>
           <option value="Miguel">Miguel</option>
-          <option value="Cullen">Cullen</option>
+          <option value="Cullen">Kyle</option>
+          <option value="Person1">New Person 1</option>
+          <option value="Person2">New Person 2</option>
         </select>
-      </div>
-
-      <div class="staff-container" style="border: 1px solid rgba(255,0,85,0.4);">
-        <label for="customerInput">🏆 Client / Customer Name</label>
-        <input type="text" id="customerInput" class="customer-input" placeholder="e.g. John Doe / Org">
       </div>
     </div>
 
     <div class="hud-box controls-panel">
       <div class="search-sort-row">
-        <input type="text" id="searchInput" placeholder="🔍 Search items (e.g. Diamond, Drill, Egg)...">
+        <input type="text" id="searchInput" placeholder="🔍 Search items...">
         <select id="sortSelect">
           <option value="alpha-asc">Alphabetical (A - Z)</option>
           <option value="alpha-desc">Alphabetical (Z - A)</option>
@@ -555,7 +437,6 @@
         <button class="btn-action btn-reset" id="resetBtn">Reset</button>
         <button class="btn-action btn-confirm" id="confirmBtn">Confirm Send</button>
       </div>
-
       <div class="category-tabs" id="categoryContainer"></div>
     </div>
 
@@ -580,178 +461,174 @@
   let searchQuery = "";
   let currentSort = "alpha-asc";
 
-  // GOOGLE APPS SCRIPT URL
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx7dPOEAoa1gnUa7ZNl1ZL_r73en8DJVIW2Gj5tEzKX3pfuHR98ZjEtaruOcqLZOlCafQ/exec";
-
-  // CLOUDFLARE PROXY URL (REPLACE WITH YOUR CLOUDFLARE WORKER ADDRESS)
   const CLOUDFLARE_PROXY_URL = "https://strawberry-webhook.johanvh731.workers.dev/";
 
   const buyItems = [
-    { name: "Asylum Gold Egg", cat: "Eggs", buy: 82500 },
-    { name: "Asylum Prime Egg", cat: "Eggs", buy: 125000 },
-    { name: "Ballas Egg", cat: "Eggs", buy: 46750 },
-    { name: "Boerboel Egg", cat: "Eggs", buy: 46750 },
-    { name: "Boertjies Egg", cat: "Eggs", buy: 46750 },
-    { name: "Cartel Egg", cat: "Eggs", buy: 46750 },
-    { name: "Dino Egg", cat: "Eggs", buy: 12500 },
-    { name: "GSF Egg", cat: "Eggs", buy: 46750 },
-    { name: "Lost Egg", cat: "Eggs", buy: 46750 },
-    { name: "Mafia Egg", cat: "Eggs", buy: 46750 },
-    { name: "Marabunta Egg", cat: "Eggs", buy: 46750 },
-    { name: "SOA Egg", cat: "Eggs", buy: 46750 },
-    { name: "Vagos Egg", cat: "Eggs", buy: 46750 },
-    { name: "Yakhuza Egg", cat: "Eggs", buy: 46750 },
+    { name: "Asylum Gold Egg", cat: "Eggs", buy: 82500, resell: 100000 },
+    { name: "Asylum Prime Egg", cat: "Eggs", buy: 125000, resell: 150000 },
+    { name: "Ballas Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Boerboel Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Boertjies Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Cartel Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Dino Egg", cat: "Eggs", buy: 12500, resell: 15000 },
+    { name: "GSF Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Lost Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Mafia Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Marabunta Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "SOA Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Vagos Egg", cat: "Eggs", buy: 46750, resell: 55000 },
+    { name: "Yakhuza Egg", cat: "Eggs", buy: 46750, resell: 55000 },
 
-    { name: "10K Gold Chain", cat: "Jewelry", buy: 2800 },
-    { name: "Asylum Gold Necklace", cat: "Jewelry", buy: 4650 },
-    { name: "Asylum Prime Necklace", cat: "Jewelry", buy: 5350 },
-    { name: "Canary Diamond Necklace", cat: "Jewelry", buy: 17850 },
-    { name: "Canary Diamond Necklace Silver", cat: "Jewelry", buy: 17765 },
-    { name: "Diamond", cat: "Jewelry", buy: 500 },
-    { name: "Diamond Bar", cat: "Jewelry", buy: 1700 },
-    { name: "Diamond Earring / Silver", cat: "Jewelry", buy: 765 },
-    { name: "Diamond Necklace", cat: "Jewelry", buy: 1275 },
-    { name: "Diamond Ring / Silver", cat: "Jewelry", buy: 765 },
-    { name: "Dragon Ring", cat: "Jewelry", buy: 1360 },
-    { name: "Emerald", cat: "Jewelry", buy: 300 },
-    { name: "Emerald Earring / Silver", cat: "Jewelry", buy: 680 },
-    { name: "Emerald Ring / Silver", cat: "Jewelry", buy: 680 },
-    { name: "Gemstone Necklace", cat: "Jewelry", buy: 4037.50 },
-    { name: "Gemstone Necklace Silver", cat: "Jewelry", buy: 3952.50 },
-    { name: "Gold Chain", cat: "Jewelry", buy: 500 },
-    { name: "Gold Earring / Ingot", cat: "Jewelry", buy: 300 },
-    { name: "Gold Ring", cat: "Jewelry", buy: 425 },
-    { name: "Goldbar", cat: "Jewelry", buy: 1450 },
-    { name: "Golden Watch", cat: "Jewelry", buy: 300 },
-    { name: "Rolex", cat: "Jewelry", buy: 340 },
-    { name: "Ruby", cat: "Jewelry", buy: 285 },
-    { name: "Ruby Chain", cat: "Jewelry", buy: 680 },
-    { name: "Ruby Earring", cat: "Jewelry", buy: 595 },
-    { name: "Ruby Earring Silver", cat: "Jewelry", buy: 594.15 },
-    { name: "Ruby Ring / Silver", cat: "Jewelry", buy: 595 },
-    { name: "Ruby Wolf Earrings", cat: "Jewelry", buy: 1360 },
-    { name: "Sapphire", cat: "Jewelry", buy: 255 },
-    { name: "Sapphire Earring / Silver", cat: "Jewelry", buy: 510 },
-    { name: "Sapphire Necklace", cat: "Jewelry", buy: 1025 },
-    { name: "Sapphire Necklace Silver", cat: "Jewelry", buy: 1275 },
-    { name: "Sapphire Ring / Silver", cat: "Jewelry", buy: 510 },
-    { name: "Silver Chain", cat: "Jewelry", buy: 700 },
-    { name: "Silver Earring / Ingot", cat: "Jewelry", buy: 340 },
-    { name: "Silver Ring", cat: "Jewelry", buy: 550 },
-    { name: "Skull Ring", cat: "Jewelry", buy: 1360 },
-    { name: "Sovereign Pendant", cat: "Jewelry", buy: 10200 },
+    { name: "10K Gold Chain", cat: "Jewelry", buy: 2800, resell: 3500 },
+    { name: "Asylum Gold Necklace", cat: "Jewelry", buy: 4650, resell: 5500 },
+    { name: "Asylum Prime Necklace", cat: "Jewelry", buy: 5350, resell: 6500 },
+    { name: "Canary Diamond Necklace", cat: "Jewelry", buy: 17850, resell: 21000 },
+    { name: "Canary Diamond Necklace Silver", cat: "Jewelry", buy: 17765, resell: 20900 },
+    { name: "Diamond", cat: "Jewelry", buy: 500, resell: 600 },
+    { name: "Diamond Bar", cat: "Jewelry", buy: 1700, resell: 2000 },
+    { name: "Diamond Earring / Silver", cat: "Jewelry", buy: 765, resell: 900 },
+    { name: "Diamond Necklace", cat: "Jewelry", buy: 1275, resell: 4600 },
+    { name: "Diamond Ring / Silver", cat: "Jewelry", buy: 765, resell: 900 },
+    { name: "Dragon Ring", cat: "Jewelry", buy: 1360, resell: 1600 },
+    { name: "Emerald", cat: "Jewelry", buy: 300, resell: 400 },
+    { name: "Emerald Earring / Silver", cat: "Jewelry", buy: 680, resell: 800 },
+    { name: "Emerald Ring / Silver", cat: "Jewelry", buy: 680, resell: 800 },
+    { name: "Gemstone Necklace", cat: "Jewelry", buy: 4037.50, resell: 4750 },
+    { name: "Gemstone Necklace Silver", cat: "Jewelry", buy: 3952.50, resell: 4650 },
+    { name: "Gold Chain", cat: "Jewelry", buy: 500, resell: 600 },
+    { name: "Gold Earring / Ingot", cat: "Jewelry", buy: 300, resell: 400 },
+    { name: "Gold Ring", cat: "Jewelry", buy: 425, resell: 500 },
+    { name: "Goldbar", cat: "Jewelry", buy: 1450, resell: 1750 },
+    { name: "Golden Watch", cat: "Jewelry", buy: 300, resell: 400 },
+    { name: "Rolex", cat: "Jewelry", buy: 340, resell: 400 },
+    { name: "Ruby", cat: "Jewelry", buy: 285, resell: 350 },
+    { name: "Ruby Chain", cat: "Jewelry", buy: 680, resell: 800 },
+    { name: "Ruby Earring", cat: "Jewelry", buy: 595, resell: 700 },
+    { name: "Ruby Earring Silver", cat: "Jewelry", buy: 594.15, resell: 699 },
+    { name: "Ruby Ring / Silver", cat: "Jewelry", buy: 595, resell: 700 },
+    { name: "Ruby Wolf Earrings", cat: "Jewelry", buy: 1360, resell: 1600 },
+    { name: "Sapphire", cat: "Jewelry", buy: 255, resell: 300 },
+    { name: "Sapphire Earring / Silver", cat: "Jewelry", buy: 510, resell: 600 },
+    { name: "Sapphire Necklace", cat: "Jewelry", buy: 1025, resell: 1200 },
+    { name: "Sapphire Necklace Silver", cat: "Jewelry", buy: 1275, resell: 1500 },
+    { name: "Sapphire Ring / Silver", cat: "Jewelry", buy: 510, resell: 600 },
+    { name: "Silver Chain", cat: "Jewelry", buy: 700, resell: 800 },
+    { name: "Silver Earring / Ingot", cat: "Jewelry", buy: 340, resell: 400 },
+    { name: "Silver Ring", cat: "Jewelry", buy: 550, resell: 650 },
+    { name: "Skull Ring", cat: "Jewelry", buy: 1360, resell: 1600 },
+    { name: "Sovereign Pendant", cat: "Jewelry", buy: 10200, resell: 12000 },
+    { name: "Uncut Diamond", cat: "Jewelry", buy: 100, resell: 100 },
+    { name: "Uncut Emerald", cat: "Jewelry", buy: 70, resell: 70 },
+    { name: "Uncut Ruby", cat: "Jewelry", buy: 60, resell: 60 },
+    { name: "Uncut Sapphire", cat: "Jewelry", buy: 50, resell: 50 },
 
-    { name: "Uncut Diamond", cat: "Jewelry", buy: 100 },
-    { name: "Uncut Emerald", cat: "Jewelry", buy: 70 },
-    { name: "Uncut Ruby", cat: "Jewelry", buy: 60 },
-    { name: "Uncut Sapphire", cat: "Jewelry", buy: 50 },
+    { name: "PS5", cat: "Electronics", buy: 450, resell: 5500 },
+    { name: "Samsung Phone / S10", cat: "Electronics", buy: 450, resell: 5500 },
+    { name: "Laptop", cat: "Electronics", buy: 450, resell: 8500 },
+    { name: "iPhone 13", cat: "Electronics", buy: 297.50, resell: 350 },
+    { name: "Tablet", cat: "Electronics", buy: 450, resell: 550 },
+    { name: "Laptop (Low Tier)", cat: "Electronics", buy: 450, resell: 550 },
+    { name: "All-in-One Printer", cat: "Electronics", buy: 4250, resell: 5000 },
+    { name: "Astronomy Telescope", cat: "Electronics", buy: 5100, resell: 6000 },
+    { name: "Audio System", cat: "Electronics", buy: 4675, resell: 5500 },
+    { name: "Camera", cat: "Electronics", buy: 4675, resell: 5500 },
+    { name: "Classic Microwave", cat: "Electronics", buy: 3825, resell: 4500 },
+    { name: "Classic Toaster", cat: "Electronics", buy: 850, resell: 1000 },
+    { name: "Coffee Maker", cat: "Electronics", buy: 2550, resell: 3000 },
+    { name: "CRT Television", cat: "Electronics", buy: 2975, resell: 3500 },
+    { name: "Data Drive", cat: "Electronics", buy: 4675, resell: 5500 },
+    { name: "Digital Scales", cat: "Electronics", buy: 1700, resell: 2000 },
+    { name: "Electric Kettle", cat: "Electronics", buy: 1275, resell: 1500 },
+    { name: "Gaming Console", cat: "Electronics", buy: 6375, resell: 7500 },
+    { name: "Gang Tablet", cat: "Electronics", buy: 29750, resell: 35000 },
+    { name: "LCD Monitor", cat: "Electronics", buy: 3825, resell: 4500 },
+    { name: "LED Television", cat: "Electronics", buy: 5525, resell: 6500 },
+    { name: "Microwave", cat: "Electronics", buy: 3825, resell: 4500 },
+    { name: "Modern Microwave", cat: "Electronics", buy: 4675, resell: 5500 },
+    { name: "Modern Toaster", cat: "Electronics", buy: 1275, resell: 1500 },
+    { name: "Music Dock", cat: "Electronics", buy: 1700, resell: 2000 },
+    { name: "Portable Boombox", cat: "Electronics", buy: 2125, resell: 2500 },
+    { name: "Professional Hair Dryer", cat: "Electronics", buy: 1700, resell: 2000 },
+    { name: "Radio Cassette Player", cat: "Electronics", buy: 1275, resell: 1500 },
+    { name: "Smart Television", cat: "Electronics", buy: 8075, resell: 9500 },
+    { name: "Stand Mixer", cat: "Electronics", buy: 3400, resell: 4000 },
+    { name: "Stolen Computer", cat: "Electronics", buy: 1317.50, resell: 1550 },
+    { name: "Stolen TV", cat: "Electronics", buy: 1317.50, resell: 1550 },
+    { name: "VCR Player", cat: "Electronics", buy: 1275, resell: 1500 },
+    { name: "Xbox X", cat: "Electronics", buy: 4675, resell: 5500 },
 
-    { name: "PS5", cat: "Electronics", buy: 450 },
-    { name: "Samsung Phone / S10", cat: "Electronics", buy: 450 },
-    { name: "Laptop", cat: "Electronics", buy: 450 },
-    { name: "iPhone 13", cat: "Electronics", buy: 297.50 },
-    { name: "Tablet", cat: "Electronics", buy: 450 },
-    { name: "Laptop (Low Tier)", cat: "Electronics", buy: 450 },
-    { name: "All-in-One Printer", cat: "Electronics", buy: 4250 },
-    { name: "Astronomy Telescope", cat: "Electronics", buy: 5100 },
-    { name: "Audio System", cat: "Electronics", buy: 4675 },
-    { name: "Camera", cat: "Electronics", buy: 4675 },
-    { name: "Classic Microwave", cat: "Electronics", buy: 3825 },
-    { name: "Classic Toaster", cat: "Electronics", buy: 850 },
-    { name: "Coffee Maker", cat: "Electronics", buy: 2550 },
-    { name: "CRT Television", cat: "Electronics", buy: 2975 },
-    { name: "Data Drive", cat: "Electronics", buy: 4675 },
-    { name: "Digital Scales", cat: "Electronics", buy: 1700 },
-    { name: "Electric Kettle", cat: "Electronics", buy: 1275 },
-    { name: "Gaming Console", cat: "Electronics", buy: 6375 },
-    { name: "Gang Tablet", cat: "Electronics", buy: 29750 },
-    { name: "LCD Monitor", cat: "Electronics", buy: 3825 },
-    { name: "LED Television", cat: "Electronics", buy: 5525 },
-    { name: "Microwave", cat: "Electronics", buy: 3825 },
-    { name: "Modern Microwave", cat: "Electronics", buy: 4675 },
-    { name: "Modern Toaster", cat: "Electronics", buy: 1275 },
-    { name: "Music Dock", cat: "Electronics", buy: 1700 },
-    { name: "Portable Boombox", cat: "Electronics", buy: 2125 },
-    { name: "Professional Hair Dryer", cat: "Electronics", buy: 1700 },
-    { name: "Radio Cassette Player", cat: "Electronics", buy: 1275 },
-    { name: "Smart Television", cat: "Electronics", buy: 8075 },
-    { name: "Stand Mixer", cat: "Electronics", buy: 3400 },
-    { name: "Stolen Computer", cat: "Electronics", buy: 1317.50 },
-    { name: "Stolen TV", cat: "Electronics", buy: 1317.50 },
-    { name: "VCR Player", cat: "Electronics", buy: 1275 },
-    { name: "Xbox X", cat: "Electronics", buy: 4675 },
+    { name: "Captain Skull", cat: "Relics & Art", buy: 145000, resell: 175000 },
+    { name: "Panther", cat: "Relics & Art", buy: 62500, resell: 75000 },
+    { name: "Golden Pogo", cat: "Miscellaneous", buy: 62500, resell: 75000 },
+    { name: "Yellow / Canary Diamond", cat: "Relics & Art", buy: 14500, resell: 20000 },
+    { name: "Art 1–5 (Painting)", cat: "Relics & Art", buy: 9000, resell: 11500 },
+    { name: "Decorated Pot", cat: "Relics & Art", buy: 2040, resell: 2400 },
+    { name: "E Chain", cat: "Relics & Art", buy: 680, resell: 800 },
+    { name: "Fossil", cat: "Relics & Art", buy: 1147.50, resell: 1350 },
+    { name: "Mythic Fossil", cat: "Relics & Art", buy: 1190, resell: 1400 },
+    { name: "Onyx Relic", cat: "Relics & Art", buy: 1020, resell: 1200 },
+    { name: "Pot", cat: "Relics & Art", buy: 977.50, resell: 1150 },
+    { name: "Prince Ruby", cat: "Relics & Art", buy: 1360, resell: 1600 },
+    { name: "Rare Fossil", cat: "Relics & Art", buy: 1275, resell: 1500 },
+    { name: "Relic", cat: "Relics & Art", buy: 1062.50, resell: 1250 },
+    { name: "Skull", cat: "Relics & Art", buy: 892.50, resell: 1050 },
+    { name: "Slate Tablet", cat: "Relics & Art", buy: 1530, resell: 1800 },
+    { name: "Time Capsule", cat: "Relics & Art", buy: 2295, resell: 2700 },
 
-    { name: "Captain Skull", cat: "Relics & Art", buy: 145000 },
-    { name: "Panther", cat: "Relics & Art", buy: 62500 },
-    { name: "Golden Pogo", cat: "Miscellaneous", buy: 62500 },
-    { name: "Yellow / Canary Diamond", cat: "Relics & Art", buy: 14500 },
-    { name: "Art 1–5 (Painting)", cat: "Relics & Art", buy: 9000 },
-    { name: "Decorated Pot", cat: "Relics & Art", buy: 2040 },
-    { name: "E Chain", cat: "Relics & Art", buy: 680 },
-    { name: "Fossil", cat: "Relics & Art", buy: 1147.50 },
-    { name: "Mythic Fossil", cat: "Relics & Art", buy: 1190 },
-    { name: "Onyx Relic", cat: "Relics & Art", buy: 1020 },
-    { name: "Pot", cat: "Relics & Art", buy: 977.50 },
-    { name: "Prince Ruby", cat: "Relics & Art", buy: 1360 },
-    { name: "Rare Fossil", cat: "Relics & Art", buy: 1275 },
-    { name: "Relic", cat: "Relics & Art", buy: 1062.50 },
-    { name: "Skull", cat: "Relics & Art", buy: 892.50 },
-    { name: "Slate Tablet", cat: "Relics & Art", buy: 1530 },
-    { name: "Time Capsule", cat: "Relics & Art", buy: 2295 },
+    { name: "Perlemoen", cat: "Miscellaneous", buy: 750, resell: 10000 },
+    { name: "Deluxe Treasure Map", cat: "Miscellaneous", buy: 765, resell: 900 },
+    { name: "Premium Treasure Map", cat: "Miscellaneous", buy: 600, resell: 800 },
+    { name: "Treasure Map", cat: "Miscellaneous", buy: 350, resell: 650 },
+    { name: "Warehouse Key", cat: "Miscellaneous", buy: 350, resell: 500 },
+    { name: "Heavy Armor", cat: "Miscellaneous", buy: 210, resell: 210 },
 
-    { name: "Perlemoen", cat: "Miscellaneous", buy: 750 },
-    { name: "Deluxe Treasure Map", cat: "Miscellaneous", buy: 765 },
-    { name: "Premium Treasure Map", cat: "Miscellaneous", buy: 600 },
-    { name: "Treasure Map", cat: "Miscellaneous", buy: 350 },
-    { name: "Warehouse Key", cat: "Miscellaneous", buy: 350 },
-    { name: "Heavy Armor", cat: "Miscellaneous", buy: 210 },
-
-    { name: "Ancient Coin", cat: "Metal Detecting", buy: 1105 },
-    { name: "Black Watch", cat: "Metal Detecting", buy: 552.50 },
-    { name: "Bottlecap", cat: "Metal Detecting", buy: 8.50 },
-    { name: "Broken Junk", cat: "Metal Detecting", buy: 85 },
-    { name: "Copper Nugget", cat: "Metal Detecting", buy: 382.50 },
-    { name: "Crushed Can", cat: "Metal Detecting", buy: 170 },
-    { name: "Diamond Earrings (Metal)", cat: "Metal Detecting", buy: 1275 },
-    { name: "Diamond Necklace (Metal)", cat: "Metal Detecting", buy: 1275 },
-    { name: "Diamond Ring (Metal)", cat: "Metal Detecting", buy: 1275 },
-    { name: "Earpod", cat: "Metal Detecting", buy: 680 },
-    { name: "Gold Dollar", cat: "Metal Detecting", buy: 1105 },
-    { name: "Gold Earrings (Metal)", cat: "Metal Detecting", buy: 1020 },
-    { name: "Gold Necklace (Metal)", cat: "Metal Detecting", buy: 1190 },
-    { name: "Gold Nugget", cat: "Metal Detecting", buy: 1487.50 },
-    { name: "Gold Ounce", cat: "Metal Detecting", buy: 1572.50 },
-    { name: "Gold Ring (Metal)", cat: "Metal Detecting", buy: 1275 },
-    { name: "Half Dollar", cat: "Metal Detecting", buy: 722.50 },
-    { name: "Iron Nugget", cat: "Metal Detecting", buy: 637.50 },
-    { name: "Lighter", cat: "Metal Detecting", buy: 10.20 },
-    { name: "Metal Can", cat: "Metal Detecting", buy: 11.90 },
-    { name: "Nails", cat: "Metal Detecting", buy: 15.30 },
-    { name: "Needle", cat: "Metal Detecting", buy: 17 },
-    { name: "Nickle", cat: "Metal Detecting", buy: 255 },
-    { name: "Nutails", cat: "Metal Detecting", buy: 18.70 },
-    { name: "Old Shotgunshell", cat: "Metal Detecting", buy: 21.25 },
-    { name: "Paperclip", cat: "Metal Detecting", buy: 23.80 },
-    { name: "Platinum Nugget", cat: "Metal Detecting", buy: 1445 },
-    { name: "Presidential Watch", cat: "Metal Detecting", buy: 1190 },
-    { name: "Pulltab", cat: "Metal Detecting", buy: 29.75 },
-    { name: "Quarter", cat: "Metal Detecting", buy: 510 },
-    { name: "Relic Revolver", cat: "Metal Detecting", buy: 680 },
-    { name: "Rusty Ball", cat: "Metal Detecting", buy: 38.25 },
-    { name: "Rusty Iron Ball", cat: "Metal Detecting", buy: 46.75 },
-    { name: "Rusty Junk", cat: "Metal Detecting", buy: 59.50 },
-    { name: "Rusty Nails", cat: "Metal Detecting", buy: 76.50 },
-    { name: "Rusty Pliers", cat: "Metal Detecting", buy: 93.50 },
-    { name: "Rusty Ring", cat: "Metal Detecting", buy: 170 },
-    { name: "Rusty Scissors", cat: "Metal Detecting", buy: 187 },
-    { name: "Rusty Screwdriver", cat: "Metal Detecting", buy: 195.50 },
-    { name: "Rusty Spring", cat: "Metal Detecting", buy: 212.50 },
-    { name: "Screw", cat: "Metal Detecting", buy: 229.50 },
-    { name: "Silver Dime", cat: "Metal Detecting", buy: 552.50 },
-    { name: "Silver Earrings (Metal)", cat: "Metal Detecting", buy: 850 },
-    { name: "Silver Ounce", cat: "Metal Detecting", buy: 1020 },
-    { name: "Silver Ring (Metal)", cat: "Metal Detecting", buy: 850 },
-    { name: "Wheat Penny", cat: "Metal Detecting", buy: 238 }
+    { name: "Ancient Coin", cat: "Metal Detecting", buy: 1105, resell: 1300 },
+    { name: "Black Watch", cat: "Metal Detecting", buy: 552.50, resell: 650 },
+    { name: "Bottlecap", cat: "Metal Detecting", buy: 8.50, resell: 10 },
+    { name: "Broken Junk", cat: "Metal Detecting", buy: 85, resell: 100 },
+    { name: "Copper Nugget", cat: "Metal Detecting", buy: 382.50, resell: 450 },
+    { name: "Crushed Can", cat: "Metal Detecting", buy: 170, resell: 200 },
+    { name: "Diamond Earrings (Metal)", cat: "Metal Detecting", buy: 1275, resell: 1500 },
+    { name: "Diamond Necklace (Metal)", cat: "Metal Detecting", buy: 1275, resell: 1500 },
+    { name: "Diamond Ring (Metal)", cat: "Metal Detecting", buy: 1275, resell: 1500 },
+    { name: "Earpod", cat: "Metal Detecting", buy: 680, resell: 800 },
+    { name: "Gold Dollar", cat: "Metal Detecting", buy: 1105, resell: 1300 },
+    { name: "Gold Earrings (Metal)", cat: "Metal Detecting", buy: 1020, resell: 1200 },
+    { name: "Gold Necklace (Metal)", cat: "Metal Detecting", buy: 1190, resell: 1400 },
+    { name: "Gold Nugget", cat: "Metal Detecting", buy: 1487.50, resell: 1750 },
+    { name: "Gold Ounce", cat: "Metal Detecting", buy: 1572.50, resell: 1850 },
+    { name: "Gold Ring (Metal)", cat: "Metal Detecting", buy: 1275, resell: 1500 },
+    { name: "Half Dollar", cat: "Metal Detecting", buy: 722.50, resell: 850 },
+    { name: "Iron Nugget", cat: "Metal Detecting", buy: 637.50, resell: 750 },
+    { name: "Lighter", cat: "Metal Detecting", buy: 10.20, resell: 12 },
+    { name: "Metal Can", cat: "Metal Detecting", buy: 11.90, resell: 14 },
+    { name: "Nails", cat: "Metal Detecting", buy: 15.30, resell: 18 },
+    { name: "Needle", cat: "Metal Detecting", buy: 17, resell: 20 },
+    { name: "Nickle", cat: "Metal Detecting", buy: 255, resell: 300 },
+    { name: "Nutails", cat: "Metal Detecting", buy: 18.70, resell: 22 },
+    { name: "Old Shotgunshell", cat: "Metal Detecting", buy: 21.25, resell: 25 },
+    { name: "Paperclip", cat: "Metal Detecting", buy: 23.80, resell: 28 },
+    { name: "Platinum Nugget", cat: "Metal Detecting", buy: 1445, resell: 1700 },
+    { name: "Presidential Watch", cat: "Metal Detecting", buy: 1190, resell: 1400 },
+    { name: "Pulltab", cat: "Metal Detecting", buy: 29.75, resell: 35 },
+    { name: "Quarter", cat: "Metal Detecting", buy: 510, resell: 600 },
+    { name: "Relic Revolver", cat: "Metal Detecting", buy: 680, resell: 800 },
+    { name: "Rusty Ball", cat: "Metal Detecting", buy: 38.25, resell: 45 },
+    { name: "Rusty Iron Ball", cat: "Metal Detecting", buy: 46.75, resell: 55 },
+    { name: "Rusty Junk", cat: "Metal Detecting", buy: 59.50, resell: 70 },
+    { name: "Rusty Nails", cat: "Metal Detecting", buy: 76.50, resell: 90 },
+    { name: "Rusty Pliers", cat: "Metal Detecting", buy: 93.50, resell: 110 },
+    { name: "Rusty Ring", cat: "Metal Detecting", buy: 170, resell: 200 },
+    { name: "Rusty Scissors", cat: "Metal Detecting", buy: 187, resell: 220 },
+    { name: "Rusty Screwdriver", cat: "Metal Detecting", buy: 195.50, resell: 230 },
+    { name: "Rusty Spring", cat: "Metal Detecting", buy: 212.50, resell: 250 },
+    { name: "Screw", cat: "Metal Detecting", buy: 229.50, resell: 270 },
+    { name: "Silver Dime", cat: "Metal Detecting", buy: 552.50, resell: 650 },
+    { name: "Silver Earrings (Metal)", cat: "Metal Detecting", buy: 850, resell: 1000 },
+    { name: "Silver Ounce", cat: "Metal Detecting", buy: 1020, resell: 1200 },
+    { name: "Silver Ring (Metal)", cat: "Metal Detecting", buy: 850, resell: 1000 },
+    { name: "Wheat Penny", cat: "Metal Detecting", buy: 238, resell: 280 }
   ];
 
   const sellItems = [
@@ -777,6 +654,7 @@
     { name: "PD Pass (Tier 1)", cat: "Heist Gear", price: 10000 },
     { name: "PD Pass (Tier 2)", cat: "Heist Gear", price: 5000 },
     { name: "Plasma Cutter", cat: "Heist Gear", price: 15000 },
+    { name: "Recycle Box (x1000)", cat: "Heist Gear", price: 250000 },
     { name: "Software USB", cat: "Heist Gear", price: 3000 },
     { name: "Thermite", cat: "Heist Gear", price: 20000 },
     { name: "USB Pink", cat: "Heist Gear", price: 9000 }
@@ -791,7 +669,6 @@
   const btnModeBuy = document.getElementById("btnModeBuy");
   const btnModeSell = document.getElementById("btnModeSell");
   const staffSelect = document.getElementById("staffSelect");
-  const customerInput = document.getElementById("customerInput");
   const lblPrimary = document.getElementById("lblPrimary");
   const valPrimary = document.getElementById("valPrimary");
   const boxSecondary = document.getElementById("boxSecondary");
@@ -817,7 +694,6 @@
       const btn = document.createElement("button");
       btn.className = `tab-btn ${cat === currentCategory ? 'active' : ''}`;
       btn.innerText = cat === "all" ? "All Items" : cat;
-      btn.setAttribute("data-cat", cat);
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
@@ -835,7 +711,7 @@
       lblPrimary.innerText = "Total Buying Price";
       valPrimary.className = "buy-total";
       boxSecondary.style.display = "block";
-      lblSecondary.innerText = "Employee Commission (5%)";
+      lblSecondary.innerText = "Employee Commission (30% Profit)";
       valSecondary.className = "seller-profit";
     } else {
       btnModeSell.className = "mode-btn active-sell";
@@ -849,7 +725,8 @@
   function updateTotals() {
     if (activeMode === "BUY") {
       const totalBuy = buyItems.reduce((acc, i) => acc + (i.qty * i.buy), 0);
-      const commission = totalBuy * 0.05;
+      const totalProfit = buyItems.reduce((acc, i) => acc + (i.qty * (i.resell - i.buy)), 0);
+      const commission = Math.max(0, totalProfit * 0.30);
       valPrimary.innerText = formatCurrency(totalBuy);
       valSecondary.innerText = formatCurrency(commission);
     } else {
@@ -860,7 +737,6 @@
 
   function getFilteredItems() {
     const list = activeMode === "BUY" ? buyItems : sellItems;
-    
     return list.filter(item => {
       const matchesCat = (currentCategory === "all") || (item.cat === currentCategory);
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -868,7 +744,6 @@
     }).sort((a, b) => {
       const priceA = activeMode === "BUY" ? a.buy : a.price;
       const priceB = activeMode === "BUY" ? b.buy : b.price;
-      
       if (currentSort === "alpha-asc") return a.name.localeCompare(b.name);
       if (currentSort === "alpha-desc") return b.name.localeCompare(a.name);
       if (currentSort === "price-asc") return priceA - priceB;
@@ -883,19 +758,13 @@
 
     if (activeMode === "BUY") {
       tableHeaderRow.innerHTML = `
-        <th>Item Name</th>
-        <th>Category</th>
-        <th>Buy Price</th>
-        <th style="text-align:center;">Quantity</th>
-        <th style="text-align:right;">Subtotal</th>
+        <th>Item Name</th><th>Category</th><th>Buy Price</th>
+        <th style="text-align:center;">Quantity</th><th style="text-align:right;">Subtotal</th>
       `;
     } else {
       tableHeaderRow.innerHTML = `
-        <th>Item Name</th>
-        <th>Category</th>
-        <th>Selling Price</th>
-        <th style="text-align:center;">Quantity</th>
-        <th style="text-align:right;">Subtotal</th>
+        <th>Item Name</th><th>Category</th><th>Selling Price</th>
+        <th style="text-align:center;">Quantity</th><th style="text-align:right;">Subtotal</th>
       `;
     }
 
@@ -903,45 +772,25 @@
 
     items.forEach(item => {
       const tr = document.createElement("tr");
+      const price = activeMode === "BUY" ? item.buy : item.price;
+      const subtotal = item.qty * price;
 
-      if (activeMode === "BUY") {
-        const subtotal = item.qty * item.buy;
-        tr.innerHTML = `
-          <td><span class="item-name">${item.name}</span></td>
-          <td><span class="category-badge">${item.cat}</span></td>
-          <td><span class="price-tag">${formatCurrency(item.buy)}</span></td>
-          <td style="text-align:center;">
-            <input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0">
-          </td>
-          <td style="text-align:right;"><span class="item-total buy">${formatCurrency(subtotal)}</span></td>
-        `;
+      tr.innerHTML = `
+        <td><span class="item-name">${item.name}</span></td>
+        <td><span class="category-badge">${item.cat}</span></td>
+        <td><span class="price-tag">${formatCurrency(price)}</span></td>
+        <td style="text-align:center;">
+          <input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0">
+        </td>
+        <td style="text-align:right;"><span class="item-total ${activeMode === "BUY" ? 'buy' : 'sell'}">${formatCurrency(subtotal)}</span></td>
+      `;
 
-        const input = tr.querySelector(".qty-input");
-        input.addEventListener("input", (e) => {
-          item.qty = Math.max(0, parseInt(e.target.value) || 0);
-          tr.querySelector(".item-total").innerText = formatCurrency(item.qty * item.buy);
-          updateTotals();
-        });
-
-      } else {
-        const subtotal = item.qty * item.price;
-        tr.innerHTML = `
-          <td><span class="item-name">${item.name}</span></td>
-          <td><span class="category-badge">${item.cat}</span></td>
-          <td><span class="price-tag">${formatCurrency(item.price)}</span></td>
-          <td style="text-align:center;">
-            <input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0">
-          </td>
-          <td style="text-align:right;"><span class="item-total sell">${formatCurrency(subtotal)}</span></td>
-        `;
-
-        const input = tr.querySelector(".qty-input");
-        input.addEventListener("input", (e) => {
-          item.qty = Math.max(0, parseInt(e.target.value) || 0);
-          tr.querySelector(".item-total").innerText = formatCurrency(item.qty * item.price);
-          updateTotals();
-        });
-      }
+      const input = tr.querySelector(".qty-input");
+      input.addEventListener("input", (e) => {
+        item.qty = Math.max(0, parseInt(e.target.value) || 0);
+        tr.querySelector(".item-total").innerText = formatCurrency(item.qty * price);
+        updateTotals();
+      });
 
       tableBody.appendChild(tr);
     });
@@ -983,16 +832,13 @@
     buyItems.forEach(i => i.qty = 0);
     sellItems.forEach(i => i.qty = 0);
     searchInput.value = "";
-    customerInput.value = "";
     searchQuery = "";
     renderTable();
     updateTotals();
   });
 
-  // HELPER FUNCTION: SEND DATA TO GOOGLE SHEETS
   async function sendToGoogleSheet(staffName, customerName, mode, totalPrice, commissionAmount) {
     if (!GOOGLE_SHEET_URL) return;
-
     const payload = {
       staff: staffName,
       customer: customerName,
@@ -1000,7 +846,6 @@
       total: totalPrice,
       commission: mode === "BUY" ? commissionAmount : 0
     };
-
     try {
       await fetch(GOOGLE_SHEET_URL, {
         method: "POST",
@@ -1009,13 +854,13 @@
         body: JSON.stringify(payload)
       });
     } catch (err) {
-      console.error("Failed logging transaction to Google Sheet:", err);
+      console.error("Failed logging transaction:", err);
     }
   }
 
   confirmBtn.addEventListener("click", async () => {
     const staffName = staffSelect.value;
-    const customerName = customerInput.value.trim() || "Walk-In / Unknown";
+    const customerName = "Walk-In / Unknown";
     const activeList = activeMode === "BUY" ? buyItems : sellItems;
     const selectedItems = activeList.filter(i => i.qty > 0);
 
@@ -1024,58 +869,32 @@
       return;
     }
 
-    let embedTitle = "";
-    let embedColor = 0;
-    let fields = [];
     let grandTotal = 0;
+    let itemLines = selectedItems.map(i => {
+      const p = activeMode === "BUY" ? i.buy : i.price;
+      const lineTotal = i.qty * p;
+      grandTotal += lineTotal;
+      return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)}`;
+    }).join("\n");
 
-    if (activeMode === "BUY") {
-      embedTitle = `🍓 Strawberry Pawn - Customer Buyout Transaction`;
-      embedColor = 16711765;
-      
-      let itemLines = selectedItems.map(i => {
-        const lineTotal = i.qty * i.buy;
-        grandTotal += lineTotal;
-        return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)} (${formatCurrency(i.buy)} ea)`;
-      }).join("\n");
+    const totalProfit = activeMode === "BUY" ? selectedItems.reduce((acc, i) => acc + (i.qty * (i.resell - i.buy)), 0) : 0;
+    const commission = Math.max(0, totalProfit * 0.30);
 
-      const commission = grandTotal * 0.05;
-
-      fields = [
-        { name: "👤 Staff Member", value: staffName, inline: true },
-        { name: "🏎️ Customer / Client", value: `**${customerName}**`, inline: true },
-        { name: "💼 Transaction Type", value: "Buying From Customer", inline: true },
-        { name: "💵 Total Buying Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
-        { name: "💰 Employee Commission (5%)", value: `**${formatCurrency(commission)}**`, inline: false },
-        { name: "📦 Items Received", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
-      ];
-    } else {
-      embedTitle = `⚡ Strawberry Pawn - Heist Gear Sale`;
-      embedColor = 16711807;
-
-      let itemLines = selectedItems.map(i => {
-        const lineTotal = i.qty * i.price;
-        grandTotal += lineTotal;
-        return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)} (${formatCurrency(i.price)} ea)`;
-      }).join("\n");
-
-      fields = [
-        { name: "👤 Staff Member", value: staffName, inline: true },
-        { name: "🏎️ Customer / Client", value: `**${customerName}**`, inline: true },
-        { name: "💼 Transaction Type", value: "Selling To Customer", inline: true },
-        { name: "💵 Total Selling Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
-        { name: "📦 Items Sold", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
-      ];
-    }
+    const fields = [
+      { name: "👤 Staff Member", value: staffName, inline: true },
+      { name: "💼 Type", value: activeMode === "BUY" ? "Buying" : "Selling", inline: true },
+      { name: "💵 Total Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
+      ...(activeMode === "BUY" ? [{ name: "💰 Commission (30% Profit)", value: `**${formatCurrency(commission)}**`, inline: false }] : []),
+      { name: "📦 Items", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
+    ];
 
     const payload = {
       username: "Strawberry Pawnshop Calculator",
       embeds: [{
-        title: embedTitle,
-        color: embedColor,
+        title: activeMode === "BUY" ? "🍓 Strawberry Pawn - Buyout" : "⚡ Strawberry Pawn - Sale",
+        color: activeMode === "BUY" ? 16711765 : 16711807,
         fields: fields,
-        timestamp: new Date().toISOString(),
-        footer: { text: "Strawberry Pawnshop | Logged via Calculator" }
+        timestamp: new Date().toISOString()
       }]
     };
 
@@ -1083,30 +902,22 @@
       confirmBtn.disabled = true;
       confirmBtn.innerText = "Sending...";
 
-      // 1. Send transaction details to Google Sheet
-      const currentCommission = activeMode === "BUY" ? (grandTotal * 0.05) : 0;
-      sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, currentCommission);
+      sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, commission);
 
-      // 2. Send transaction payload to Cloudflare Worker Proxy
-      const res = await fetch(CLOUDFLARE_PROXY_URL, {
+      await fetch(CLOUDFLARE_PROXY_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      if (res.ok) {
-        alert(`Transaction logged successfully for ${customerName}!`);
-        buyItems.forEach(i => i.qty = 0);
-        sellItems.forEach(i => i.qty = 0);
-        customerInput.value = "";
-        renderTable();
-        updateTotals();
-      } else {
-        alert("Transaction logged to Google Sheet, but Cloudflare Proxy failed to deliver Discord message.");
-      }
+      alert("Transaction logged successfully!");
+      buyItems.forEach(i => i.qty = 0);
+      sellItems.forEach(i => i.qty = 0);
+      renderTable();
+      updateTotals();
     } catch (err) {
       console.error(err);
-      alert("Error submitting transaction. Check browser console.");
+      alert("Error submitting transaction.");
     } finally {
       confirmBtn.disabled = false;
       confirmBtn.innerText = "Confirm Send";
