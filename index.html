@@ -395,14 +395,16 @@
       <div class="logo-container">
         <h1>Strawberry Pawnshop <span>Calculator</span></h1>
       </div>
-      <div class="status-boxes">
-        <div class="stat-card" id="boxPrimary">
-          <span id="lblPrimary">Total Buying Price</span>
-          <strong id="valPrimary" class="buy-total">$0.00</strong>
-        </div>
-        <div class="stat-card" id="boxSecondary">
-          <span id="lblSecondary">Employee Commission (30% Profit)</span>
-          <strong id="valSecondary" class="seller-profit">$0.00</strong>
+      <div>
+        <div class="status-boxes">
+          <div class="stat-card" id="boxPrimary">
+            <span id="lblPrimary">Total Buying Price</span>
+            <strong id="valPrimary" class="buy-total">$0.00</strong>
+          </div>
+          <div class="stat-card" id="boxSecondary">
+            <span id="lblSecondary">Employee Commission (50% Profit)</span>
+            <strong id="valSecondary" class="seller-profit">$0.00</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -423,7 +425,6 @@
           <option value="Kaydee">Kaydee</option>
           <option value="Rachel">Rachel</option>
           <option value="Dan">Dan</option>
-          
         </select>
       </div>
     </div>
@@ -434,8 +435,8 @@
         <select id="sortSelect">
           <option value="alpha-asc">Alphabetical (A - Z)</option>
           <option value="alpha-desc">Alphabetical (Z - A)</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
+          <option value="price-asc">Price Low to High</option>
+          <option value="price-desc">Price High to Low</option>
         </select>
         <button class="btn-action btn-reset" id="resetBtn">Reset</button>
         <button class="btn-action btn-confirm" id="confirmBtn">Confirm Send</button>
@@ -465,7 +466,7 @@
   let currentSort = "alpha-asc";
 
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx7dPOEAoa1gnUa7ZNl1ZL_r73en8DJVIW2Gj5tEzKX3pfuHR98ZjEtaruOcqLZOlCafQ/exec";
-  const CLOUDFLARE_PROXY_URL = "https://strawberry-webhook.johanvh731.workers.dev/";
+  const CLOUDFLARE_PROXY_URL = "https://strawberry-webhook.johanvh731.workers.dev";
 
   const buyItems = [
     { name: "Asylum Gold Egg", cat: "Eggs", buy: 82500, resell: 100000 },
@@ -585,7 +586,7 @@
     { name: "Treasure Map", cat: "Miscellaneous", buy: 350, resell: 650 },
     { name: "Warehouse Key", cat: "Miscellaneous", buy: 350, resell: 500 },
     { name: "Heavy Armor", cat: "Miscellaneous", buy: 210, resell: 210 },
-    { name: "Recycle Box (x1000)", cat: "Miscellaneous", buy: 285000, resell: 285000 },
+    { name: "Recycle Box", cat: "Miscellaneous", buy: 250000, resell: 285000 },
 
     { name: "Ancient Coin", cat: "Metal Detecting", buy: 1105, resell: 1300 },
     { name: "Black Watch", cat: "Metal Detecting", buy: 552.50, resell: 650 },
@@ -637,7 +638,7 @@
 
   const sellItems = [
     { name: "Advanced Drill", cat: "Heist Gear", price: 20000 },
-    { name: "Advanced Lockpick", cat: "Heist Gear", price: 4000 },
+    { name: "Advanced Lockpick", cat: "Heist Gear", price: 8000 },
     { name: "Ammunation Pass", cat: "Heist Gear", price: 5000 },
     { name: "Big Drill", cat: "Heist Gear", price: 20000 },
     { name: "Blue Bag", cat: "Heist Gear", price: 6500 },
@@ -659,9 +660,12 @@
     { name: "PD Pass (Tier 2)", cat: "Heist Gear", price: 5000 },
     { name: "Plasma Cutter", cat: "Heist Gear", price: 15000 },
     { name: "Software USB", cat: "Heist Gear", price: 3000 },
+    { name: "Switch Blade", cat: "Heist Gear", price: 20000 },
     { name: "Thermite", cat: "Heist Gear", price: 20000 },
     { name: "USB Pink", cat: "Heist Gear", price: 9000 },
-    { name: "RedDrag Class 3", cat: "GUNS", price: 300000 }
+    { name: "Gun Class 1", cat: "GUNS", price: 100000 },
+    { name: "Gun Class 2", cat: "GUNS", price: 250000 },
+    { name: "Gun Class 3", cat: "GUNS", price: 400000 }
   ];
 
   buyItems.forEach(i => i.qty = 0);
@@ -715,7 +719,7 @@
       lblPrimary.innerText = "Total Buying Price";
       valPrimary.className = "buy-total";
       boxSecondary.style.display = "block";
-      lblSecondary.innerText = "Employee Commission (30% Profit)";
+      lblSecondary.innerText = "Employee Commission (50% Profit)";
       valSecondary.className = "seller-profit";
     } else {
       btnModeSell.className = "mode-btn active-sell";
@@ -730,7 +734,7 @@
     if (activeMode === "BUY") {
       const totalBuy = buyItems.reduce((acc, i) => acc + (i.qty * i.buy), 0);
       const totalProfit = buyItems.reduce((acc, i) => acc + (i.qty * (i.resell - i.buy)), 0);
-      const commission = Math.max(0, totalProfit * 0.30);
+      const commission = Math.max(0, totalProfit * 0.50);
       valPrimary.innerText = formatCurrency(totalBuy);
       valSecondary.innerText = formatCurrency(commission);
     } else {
@@ -858,7 +862,7 @@
         body: JSON.stringify(payload)
       });
     } catch (err) {
-      console.error("Failed logging transaction:", err);
+      console.error("Failed logging transaction", err);
     }
   }
 
@@ -878,17 +882,17 @@
       const p = activeMode === "BUY" ? i.buy : i.price;
       const lineTotal = i.qty * p;
       grandTotal += lineTotal;
-      return `• **${i.name}** x${i.qty} — ${formatCurrency(lineTotal)}`;
+      return `• ${i.name} x${i.qty} — ${formatCurrency(lineTotal)}`;
     }).join("\n");
 
     const totalProfit = activeMode === "BUY" ? selectedItems.reduce((acc, i) => acc + (i.qty * (i.resell - i.buy)), 0) : 0;
-    const commission = Math.max(0, totalProfit * 0.30);
+    const commission = Math.max(0, totalProfit * 0.50);
 
     const fields = [
       { name: "👤 Staff Member", value: staffName, inline: true },
       { name: "💼 Type", value: activeMode === "BUY" ? "Buying" : "Selling", inline: true },
-      { name: "💵 Total Price", value: `**${formatCurrency(grandTotal)}**`, inline: false },
-      ...(activeMode === "BUY" ? [{ name: "💰 Commission (30% Profit)", value: `**${formatCurrency(commission)}**`, inline: false }] : []),
+      { name: "💵 Total Price", value: `${formatCurrency(grandTotal)}`, inline: false },
+      ...(activeMode === "BUY" ? [{ name: "💰 Commission (50% Profit)", value: `${formatCurrency(commission)}`, inline: false }] : []),
       { name: "📦 Items", value: itemLines.length > 1024 ? itemLines.substring(0, 1020) + "..." : itemLines, inline: false }
     ];
 
