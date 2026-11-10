@@ -136,6 +136,14 @@
     .staff-container { flex: 2; min-width: 220px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 8px 16px; border-radius: 14px; }
     .staff-container label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; color: var(--strawberry-red); margin-bottom: 2px; display: block; }
     .staff-select { background: transparent; border: none; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; outline: none; width: 100%; pointer-events: none; }
+    
+    /* Dark dropdown styling to fix bright white native list */
+    .staff-select option {
+      background-color: #16090d;
+      color: #fff0f5;
+      padding: 10px;
+    }
+
     .logout-btn { background: rgba(255,0,85,0.2); border: 1px solid var(--strawberry-red); color: #fff; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; }
     .logout-btn:hover { background: var(--strawberry-red); color: #0d0205; }
     .controls-panel { border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
