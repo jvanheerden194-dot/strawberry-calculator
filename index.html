@@ -294,6 +294,14 @@
       document.getElementById("loginModal").style.display = "none";
     }
   }
+  async function handleLogout() {
+    await supabaseClient.auth.signOut();
+    // Clear inputs and show the login modal again
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("loginError").innerText = "";
+    document.getElementById("loginModal").style.display = "flex";
+  }
 
   let activeMode = "BUY";
   let currentCategory = "all";
