@@ -42,7 +42,7 @@
     }
 
     /* LOGIN MODAL OVERLAY */
-    #loginModal {
+    #loginModal, #resetModal {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(13, 2, 5, 0.95);
@@ -133,9 +133,11 @@
     .mode-btn { flex: 2; min-width: 220px; background: var(--bg-card); border: none; color: var(--text-muted); padding: 14px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 900; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .mode-btn.active-buy { background: linear-gradient(135deg, rgba(255, 0, 85, 0.35) 0%, rgba(255, 0, 127, 0.3) 100%); color: #ffffff; box-shadow: 0 0 30px rgba(255, 0, 85, 0.5); }
     .mode-btn.active-sell { background: linear-gradient(135deg, rgba(255, 0, 127, 0.35) 0%, rgba(255, 82, 154, 0.25) 100%); color: #ffffff; box-shadow: 0 0 30px rgba(255, 0, 127, 0.5); }
-    .staff-container { flex: 2; min-width: 220px; display: flex; flex-direction: column; justify-content: center; background: var(--bg-card); padding: 8px 16px; border-radius: 14px; }
-    .staff-container label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; color: var(--strawberry-red); margin-bottom: 2px; }
+    .staff-container { flex: 2; min-width: 220px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 8px 16px; border-radius: 14px; }
+    .staff-container label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; color: var(--strawberry-red); margin-bottom: 2px; display: block; }
     .staff-select { background: transparent; border: none; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; outline: none; width: 100%; pointer-events: none; }
+    .logout-btn { background: rgba(255,0,85,0.2); border: 1px solid var(--strawberry-red); color: #fff; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; }
+    .logout-btn:hover { background: var(--strawberry-red); color: #0d0205; }
     .controls-panel { border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
     .search-sort-row { display: flex; flex-wrap: wrap; gap: 12px; }
     .search-sort-row input, .search-sort-row select { background: rgba(20, 2, 8, 0.95); border: none; color: var(--text-white); padding: 12px 16px; border-radius: 10px; font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; outline: none; }
@@ -173,6 +175,16 @@
     </div>
   </div>
 
+  <!-- PASSWORD RESET MODAL -->
+  <div id="resetModal" style="display: none;">
+    <div class="login-box hud-box hud-corner">
+      <h2>Strawberry Pawn <span>Set New Password</span></h2>
+      <input type="password" id="newPassword" placeholder="Enter New Password">
+      <button class="login-btn" onclick="handlePasswordUpdate()">Update Password</button>
+      <div class="login-error" id="resetError"></div>
+    </div>
+  </div>
+
   <div class="tablet-device">
     <div class="tablet-screen">
       <!-- BRANDING / STATUS BAR -->
@@ -200,19 +212,21 @@
         <button class="mode-btn" id="btnModeSell">⚡ Selling To Customers (Heist Gear)</button>
         
         <div class="staff-container">
-          <label for="staffSelect">👤 Logged In Staff</label>
-          <select id="staffSelect" class="staff-select">
-            <option value="Lexi">Lexi</option>
-            <option value="Thas">Thas</option>
-            <option value="Caleb">Caleb</option>
-            <option value="Dan">Dan</option>
-            <option value="Joe">Joe</option>
-            <option value="Trinity">Trinity</option>
-            <option value="Miguel">Miguel</option>
-            <option value="Rachel">Rachel</option>
-          </select>
+          <div>
+            <label for="staffSelect">👤 Logged In Staff</label>
+            <select id="staffSelect" class="staff-select">
+              <option value="Lexi">Lexi</option>
+              <option value="Thas">Thas</option>
+              <option value="Caleb">Caleb</option>
+              <option value="Dan">Dan</option>
+              <option value="Joe">Joe</option>
+              <option value="Trinity">Trinity</option>
+              <option value="Miguel">Miguel</option>
+              <option value="Rachel">Rachel</option>
+            </select>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
-        <button id="logoutBtn" onclick="handleLogout()" style="background: rgba(255,0,85,0.2); border: 1px solid var(--strawberry-red); color: #fff; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 900; text-transform: uppercase;">Logout</button>
       </div>
 
       <!-- CONTROLS PANEL -->
@@ -246,19 +260,37 @@
       <div class="home-pill"></div>
     </div>
   </div>
-  
+
 <script>
   // --- SUPABASE CONFIGURATION ---
   const SUPABASE_URL = "https://zfsgdajjccbmyrlwkzaz.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_vRe4G0ynsLD9j2JRSwvgMA_CDSgywTK";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // --- AUTO-LOGIN CHECK ON PAGE LOAD ---
+  // Define God User Supervisor Email as admin
+  const GOD_USER_EMAIL = "admin@strawberry.com";
+
+  function checkGodUser(email) {
+    const staffSelect = document.getElementById("staffSelect");
+    if (email.toLowerCase() === GOD_USER_EMAIL) {
+      staffSelect.style.pointerEvents = "auto"; // Admin can switch staff names freely
+    } else {
+      staffSelect.style.pointerEvents = "none"; // Regular staff locked to profile
+    }
+  }
+
+  // --- AUTO-LOGIN & PASSWORD RECOVERY CHECK ON PAGE LOAD ---
   window.addEventListener("DOMContentLoaded", async () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes("type=recovery")) {
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("resetModal").style.display = "flex";
+      return;
+    }
+
     const { data: { session } } = await supabaseClient.auth.getSession();
     
     if (session && session.user) {
-      // User is already logged in from before! Auto-fill and hide modal.
       const email = session.user.email;
       const username = email.split('@')[0];
       const capitalized = username.charAt(0).toUpperCase() + username.slice(1);
@@ -266,7 +298,7 @@
       const staffSelect = document.getElementById("staffSelect");
       staffSelect.value = capitalized;
 
-      // Hide login modal automatically
+      checkGodUser(email);
       document.getElementById("loginModal").style.display = "none";
     }
   });
@@ -290,13 +322,36 @@
       const staffSelect = document.getElementById("staffSelect");
       staffSelect.value = capitalized;
 
-      // Hide login modal
+      checkGodUser(email);
       document.getElementById("loginModal").style.display = "none";
     }
   }
+
+  async function handlePasswordUpdate() {
+    const newPassword = document.getElementById("newPassword").value;
+    const resetError = document.getElementById("resetError");
+
+    if (!newPassword || newPassword.length < 6) {
+      resetError.innerText = "Password must be at least 6 characters.";
+      return;
+    }
+
+    const { data, error } = await supabaseClient.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      resetError.innerText = error.message;
+    } else {
+      alert("Password updated successfully!");
+      document.getElementById("resetModal").style.display = "none";
+      window.location.hash = "";
+      window.location.reload();
+    }
+  }
+
   async function handleLogout() {
     await supabaseClient.auth.signOut();
-    // Clear inputs and show the login modal again
     document.getElementById("loginEmail").value = "";
     document.getElementById("loginPassword").value = "";
     document.getElementById("loginError").innerText = "";
@@ -699,3 +754,5 @@
   renderTable();
   updateTotals();
 </script>
+</body>
+</html>
