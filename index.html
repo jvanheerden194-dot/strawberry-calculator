@@ -1,3 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strawberry Pawnshop Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,900&family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-dark: #0d0205;
+      --bg-card: rgba(45, 8, 22, 0.88);
+      --bg-panel: rgba(32, 5, 14, 0.95);
+      --strawberry-red: #ff0055;
+      --strawberry-pink: #ff007f;
+      --pink-glow: #ff529a;
+      --text-white: #fff0f5;
+      --text-muted: #b37f93;
+      --success: #00ffaa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    body {
+      background-color: #000;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 0, 85, 0.2) 0%, transparent 70%),
+        radial-gradient(circle at 80% 20%, rgba(255, 0, 127, 0.15) 0%, transparent 60%);
+      color: var(--text-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* LOGIN MODAL OVERLAY */
+    #loginModal {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(13, 2, 5, 0.95);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-box {
+      background: var(--bg-panel);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 0 50px rgba(255, 0, 85, 0.4);
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+    .login-box h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+    .login-box h2 span { color: var(--strawberry-red); display: block; }
+    .login-box input {
+      background: rgba(20, 2, 8, 0.95);
+      border: 2px solid rgba(255, 0, 85, 0.3);
+      color: #fff;
+      padding: 14px;
+      border-radius: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      outline: none;
+    }
+    .login-box input:focus { border-color: var(--strawberry-red); }
+    .login-btn {
+      background: linear-gradient(135deg, var(--strawberry-red) 0%, var(--strawberry-pink) 100%);
+      color: #0d0205;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
+    }
+    .login-error { color: #ff4444; font-size: 0.9rem; min-height: 20px; }
+
+    /* TABLET UI */
+    .tablet-device {
+      width: 100%; max-width: 1240px; height: 92vh; max-height: 880px;
+      background: #16090d; border-radius: 32px;
+      box-shadow: 0 0 60px rgba(255, 0, 85, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.95);
+      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .tablet-screen { 
+      flex: 1; 
+      padding: 24px; 
+      overflow-y: auto; 
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tablet-home-bar { height: 18px; background: #100508; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    .home-pill { width: 150px; height: 5px; background: rgba(255, 0, 85, 0.5); border-radius: 4px; }
+    .hud-box { 
+      position: relative; 
+      background: var(--bg-panel); 
+      backdrop-filter: blur(12px); 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 0, 85, 0.1); 
+      flex-shrink: 0;
+    }
+    .hud-corner { clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)); }
+    .branding-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-radius: 16px; padding: 16px 24px; }
+    .logo-container h1 { font-family: 'Montserrat', sans-serif; font-size: 2.2rem; font-weight: 900; font-style: italic; line-height: 0.95; text-transform: uppercase; color: #ffffff; }
+    .logo-container h1 span { color: var(--strawberry-red); display: block; text-shadow: 0 0 18px rgba(255, 0, 85, 0.9); }
+    .status-boxes { display: flex; align-items: center; gap: 12px; }
+    .stat-card { background: rgba(28, 3, 12, 0.95); padding: 10px 20px; border-radius: 12px; text-align: right; min-width: 175px; }
+    .stat-card span { display: block; font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); }
+    .stat-card strong { font-family: 'Chakra Petch', sans-serif; font-size: 1.7rem; }
+    .stat-card strong.buy-total { color: var(--strawberry-red); }
+    .stat-card strong.sell-total { color: var(--pink-glow); }
+    .stat-card strong.seller-profit { color: var(--success); }
+    .mode-nav { display: flex; flex-wrap: wrap; gap: 14px; }
+    .mode-btn { flex: 2; min-width: 220px; background: var(--bg-card); border: none; color: var(--text-muted); padding: 14px; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 900; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .mode-btn.active-buy { background: linear-gradient(135deg, rgba(255, 0, 85, 0.35) 0%, rgba(255, 0, 127, 0.3) 100%); color: #ffffff; box-shadow: 0 0 30px rgba(255, 0, 85, 0.5); }
+    .mode-btn.active-sell { background: linear-gradient(135deg, rgba(255, 0, 127, 0.35) 0%, rgba(255, 82, 154, 0.25) 100%); color: #ffffff; box-shadow: 0 0 30px rgba(255, 0, 127, 0.5); }
+    .staff-container { flex: 2; min-width: 220px; display: flex; flex-direction: column; justify-content: center; background: var(--bg-card); padding: 8px 16px; border-radius: 14px; }
+    .staff-container label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; color: var(--strawberry-red); margin-bottom: 2px; }
+    .staff-select { background: transparent; border: none; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; outline: none; width: 100%; pointer-events: none; }
+    .controls-panel { border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+    .search-sort-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .search-sort-row input, .search-sort-row select { background: rgba(20, 2, 8, 0.95); border: none; color: var(--text-white); padding: 12px 16px; border-radius: 10px; font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; outline: none; }
+    .search-sort-row input { flex: 1; min-width: 200px; }
+    .btn-action { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; padding: 12px 22px; border-radius: 10px; border: none; cursor: pointer; }
+    .btn-reset { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+    .btn-confirm { background: linear-gradient(135deg, var(--strawberry-red) 0%, var(--strawberry-pink) 100%); color: #0d0205; box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); }
+    .category-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tab-btn { background: rgba(43, 4, 18, 0.8); border: none; color: var(--text-muted); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+    .tab-btn.active { background: var(--strawberry-red); color: #0d0205; font-weight: 900; }
+    .table-container { border-radius: 16px; overflow-x: auto; overflow-y: auto; flex: 1; min-height: 300px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: rgba(20, 2, 8, 0.98); color: var(--strawberry-red); font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 900; text-transform: uppercase; padding: 14px 18px; position: sticky; top: 0; z-index: 10; }
+    td { padding: 12px 18px; vertical-align: middle; }
+    tr:hover td { background: rgba(255, 0, 85, 0.08); }
+    .category-badge { display: inline-block; font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: rgba(255, 0, 85, 0.1); color: var(--strawberry-red); text-transform: uppercase; }
+    .item-name { font-size: 1.1rem; font-weight: 700; color: #ffffff; }
+    .price-tag { font-family: 'Chakra Petch', sans-serif; font-size: 1.1rem; color: var(--text-muted); }
+    .qty-input { width: 90px; background: rgba(20, 2, 8, 0.95); border: none; color: #fff; font-family: 'Chakra Petch', sans-serif; font-size: 1.15rem; padding: 8px 10px; border-radius: 8px; text-align: center; outline: none; }
+    .item-total { font-family: 'Chakra Petch', sans-serif; font-size: 1.2rem; font-weight: 700; }
+    .item-total.buy { color: var(--strawberry-red); }
+    .item-total.sell { color: var(--pink-glow); }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN MODAL -->
+  <div id="loginModal">
+    <div class="login-box hud-box hud-corner">
+      <h2>Strawberry Pawn <span>Staff Login</span></h2>
+      <input type="email" id="loginEmail" placeholder="Staff Email">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <button class="login-btn" onclick="handleLogin()">Login to Calculator</button>
+      <div class="login-error" id="loginError"></div>
+    </div>
+  </div>
+
+  <div class="tablet-device">
+    <div class="tablet-screen">
+      <!-- BRANDING / STATUS BAR -->
+      <div class="hud-box hud-corner branding-bar">
+        <div class="logo-container">
+          <h1>Strawberry Pawnshop <span>Calculator</span></h1>
+        </div>
+        <div>
+          <div class="status-boxes">
+            <div class="stat-card" id="boxPrimary">
+              <span id="lblPrimary">Total Buying Price</span>
+              <strong id="valPrimary" class="buy-total">$0.00</strong>
+            </div>
+            <div class="stat-card" id="boxSecondary">
+              <span id="lblSecondary">Employee Commission (50% Profit)</span>
+              <strong id="valSecondary" class="seller-profit">$0.00</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODE & STAFF NAV -->
+      <div class="mode-nav">
+        <button class="mode-btn active-buy" id="btnModeBuy">🍓 Buying From Customers</button>
+        <button class="mode-btn" id="btnModeSell">⚡ Selling To Customers (Heist Gear)</button>
+        
+        <div class="staff-container">
+          <label for="staffSelect">👤 Logged In Staff</label>
+          <select id="staffSelect" class="staff-select">
+            <option value="Lexi">Lexi</option>
+            <option value="Thas">Thas</option>
+            <option value="Caleb">Caleb</option>
+            <option value="Dan">Dan</option>
+            <option value="Joe">Joe</option>
+            <option value="Trinity">Trinity</option>
+            <option value="Miguel">Miguel</option>
+            <option value="Rachel">Rachel</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CONTROLS PANEL -->
+      <div class="hud-box controls-panel">
+        <div class="search-sort-row">
+          <input type="text" id="searchInput" placeholder="🔍 Search items...">
+          <select id="sortSelect">
+            <option value="alpha-asc">Alphabetical (A - Z)</option>
+            <option value="alpha-desc">Alphabetical (Z - A)</option>
+            <option value="price-asc">Price Low to High</option>
+            <option value="price-desc">Price High to Low</option>
+          </select>
+          <button class="btn-action btn-reset" id="resetBtn">Reset</button>
+          <button class="btn-action btn-confirm" id="confirmBtn">Confirm Send</button>
+        </div>
+        <div class="category-tabs" id="categoryContainer"></div>
+      </div>
+
+      <!-- TABLE CONTAINER -->
+      <div class="hud-box table-container">
+        <table>
+          <thead>
+            <tr id="tableHeaderRow"></tr>
+          </thead>
+          <tbody id="itemsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tablet-home-bar">
+      <div class="home-pill"></div>
+    </div>
+  </div>
+  
 <script>
   // --- SUPABASE CONFIGURATION ---
   const SUPABASE_URL = "https://zfsgdajjccbmyrlwkzaz.supabase.co";
