@@ -1,466 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Strawberry Pawnshop Calculator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,900&family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-dark: #0d0205;
-      --bg-card: rgba(45, 8, 22, 0.88);
-      --bg-panel: rgba(32, 5, 14, 0.95);
-      --strawberry-red: #ff0055;
-      --strawberry-pink: #ff007f;
-      --pink-glow: #ff529a;
-      --text-white: #fff0f5;
-      --text-muted: #b37f93;
-      --success: #00ffaa;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-
-    body {
-      background-color: #000;
-      background-image: 
-        radial-gradient(circle at 50% 50%, rgba(255, 0, 85, 0.2) 0%, transparent 70%),
-        radial-gradient(circle at 80% 20%, rgba(255, 0, 127, 0.15) 0%, transparent 60%);
-      color: var(--text-white);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 17px;
-      font-weight: 600;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow: hidden;
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-dark);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--strawberry-red);
-      border-radius: 4px;
-    }
-
-    .tablet-device {
-      width: 100%;
-      max-width: 1240px;
-      height: 92vh;
-      max-height: 880px;
-      background: #16090d;
-      border-radius: 32px;
-      box-shadow: 0 0 60px rgba(255, 0, 85, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.95);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tablet-screen {
-      flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tablet-home-bar {
-      height: 18px;
-      background: #100508;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .home-pill {
-      width: 150px;
-      height: 5px;
-      background: rgba(255, 0, 85, 0.5);
-      border-radius: 4px;
-    }
-
-    .hud-box {
-      position: relative;
-      background: var(--bg-panel);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 0, 85, 0.1);
-    }
-
-    .hud-corner {
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-    }
-
-    .branding-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 16px;
-      padding: 16px 24px;
-      margin-bottom: 18px;
-    }
-
-    .logo-container h1 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 2.2rem;
-      font-weight: 900;
-      font-style: italic;
-      line-height: 0.95;
-      text-transform: uppercase;
-      color: #ffffff;
-    }
-
-    .logo-container h1 span {
-      color: var(--strawberry-red);
-      display: block;
-      text-shadow: 0 0 18px rgba(255, 0, 85, 0.9);
-    }
-
-    .status-boxes {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .stat-card {
-      background: rgba(28, 3, 12, 0.95);
-      padding: 10px 20px;
-      border-radius: 12px;
-      text-align: right;
-      min-width: 175px;
-    }
-
-    .stat-card span {
-      display: block;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .stat-card strong {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 1.7rem;
-    }
-
-    .stat-card strong.buy-total { color: var(--strawberry-red); }
-    .stat-card strong.sell-total { color: var(--pink-glow); }
-    .stat-card strong.seller-profit { color: var(--success); }
-
-    .mode-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .mode-btn {
-      flex: 2;
-      min-width: 220px;
-      background: var(--bg-card);
-      border: none;
-      color: var(--text-muted);
-      padding: 14px;
-      border-radius: 14px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .mode-btn.active-buy {
-      background: linear-gradient(135deg, rgba(255, 0, 85, 0.35) 0%, rgba(255, 0, 127, 0.3) 100%);
-      color: #ffffff;
-      box-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
-    }
-
-    .mode-btn.active-sell {
-      background: linear-gradient(135deg, rgba(255, 0, 127, 0.35) 0%, rgba(255, 82, 154, 0.25) 100%);
-      color: #ffffff;
-      box-shadow: 0 0 30px rgba(255, 0, 127, 0.5);
-    }
-
-    .staff-container {
-      flex: 2;
-      min-width: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: var(--bg-card);
-      padding: 8px 16px;
-      border-radius: 14px;
-    }
-
-    .staff-container label {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: var(--strawberry-red);
-      margin-bottom: 2px;
-    }
-
-    .staff-select {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-      outline: none;
-      width: 100%;
-    }
-
-    .staff-select option {
-      background: #22030d;
-      color: #fff;
-    }
-
-    .controls-panel {
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .search-sort-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .search-sort-row input, .search-sort-row select {
-      background: rgba(20, 2, 8, 0.95);
-      border: none;
-      color: var(--text-white);
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.05rem;
-      outline: none;
-    }
-
-    .search-sort-row input {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .btn-action {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      padding: 12px 22px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-reset {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-muted);
-    }
-
-    .btn-confirm {
-      background: linear-gradient(135deg, var(--strawberry-red) 0%, var(--strawberry-pink) 100%);
-      color: #0d0205;
-      box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
-    }
-
-    .category-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tab-btn {
-      background: rgba(43, 4, 18, 0.8);
-      border: none;
-      color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-    }
-
-    .tab-btn.active {
-      background: var(--strawberry-red);
-      color: #0d0205;
-      font-weight: 900;
-    }
-
-    .table-container {
-      border-radius: 16px;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    th {
-      background: rgba(20, 2, 8, 0.98);
-      color: var(--strawberry-red);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      padding: 14px 18px;
-    }
-
-    td {
-      padding: 12px 18px;
-      vertical-align: middle;
-    }
-
-    tr:hover td {
-      background: rgba(255, 0, 85, 0.08);
-    }
-
-    .category-badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: rgba(255, 0, 85, 0.1);
-      color: var(--strawberry-red);
-      text-transform: uppercase;
-    }
-
-    .item-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    .price-tag {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 1.1rem;
-      color: var(--text-muted);
-    }
-
-    .qty-input {
-      width: 90px;
-      background: rgba(20, 2, 8, 0.95);
-      border: none;
-      color: #fff;
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 1.15rem;
-      padding: 8px 10px;
-      border-radius: 8px;
-      text-align: center;
-      outline: none;
-    }
-
-    .item-total {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
-    .item-total.buy { color: var(--strawberry-red); }
-    .item-total.sell { color: var(--pink-glow); }
-  </style>
-</head>
-<body>
-
-<div class="tablet-device">
-  <div class="tablet-screen">
-    <div class="hud-box hud-corner branding-bar">
-      <div class="logo-container">
-        <h1>Strawberry Pawnshop <span>Calculator</span></h1>
-      </div>
-      <div>
-        <div class="status-boxes">
-          <div class="stat-card" id="boxPrimary">
-            <span id="lblPrimary">Total Buying Price</span>
-            <strong id="valPrimary" class="buy-total">$0.00</strong>
-          </div>
-          <div class="stat-card" id="boxSecondary">
-            <span id="lblSecondary">Employee Commission (50% Profit)</span>
-            <strong id="valSecondary" class="seller-profit">$0.00</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mode-nav">
-      <button class="mode-btn active-buy" id="btnModeBuy">🍓 Buying From Customers</button>
-      <button class="mode-btn" id="btnModeSell">⚡ Selling To Customers (Heist Gear)</button>
-      
-      <div class="staff-container">
-        <label for="staffSelect">👤 Staff Member</label>
-        <select id="staffSelect" class="staff-select">
-          <option value="Lexi">Lexi</option>
-          <option value="Xander">Xander</option>
-          <option value="Joe">Joe</option>
-          <option value="Miguel">Miguel</option>
-          <option value="Caleb">Caleb</option>
-          <option value="Thas">Thas</option>
-          <option value="Trinity">Trinity</option>
-          <option value="Kaydee">Kaydee</option>
-          <option value="Rachel">Rachel</option>
-          <option value="Dan">Dan</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="hud-box controls-panel">
-      <div class="search-sort-row">
-        <input type="text" id="searchInput" placeholder="🔍 Search items...">
-        <select id="sortSelect">
-          <option value="alpha-asc">Alphabetical (A - Z)</option>
-          <option value="alpha-desc">Alphabetical (Z - A)</option>
-          <option value="price-asc">Price Low to High</option>
-          <option value="price-desc">Price High to Low</option>
-        </select>
-        <button class="btn-action btn-reset" id="resetBtn">Reset</button>
-        <button class="btn-action btn-confirm" id="confirmBtn">Confirm Send</button>
-      </div>
-      <div class="category-tabs" id="categoryContainer"></div>
-    </div>
-
-    <div class="hud-box table-container">
-      <table>
-        <thead>
-          <tr id="tableHeaderRow"></tr>
-        </thead>
-        <tbody id="itemsTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="tablet-home-bar">
-    <div class="home-pill"></div>
-  </div>
-</div>
-
 <script>
+  // --- SUPABASE CONFIGURATION ---
+  const SUPABASE_URL = "https://zfsgdajjccbmyrlwkzaz.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_vRe4G0ynsLD9j2JRSwvgMA_CDSgywTK";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // --- AUTO-LOGIN CHECK ON PAGE LOAD ---
+  window.addEventListener("DOMContentLoaded", async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (session && session.user) {
+      // User is already logged in from before! Auto-fill and hide modal.
+      const email = session.user.email;
+      const username = email.split('@')[0];
+      const capitalized = username.charAt(0).toUpperCase() + username.slice(1);
+      
+      const staffSelect = document.getElementById("staffSelect");
+      staffSelect.value = capitalized;
+
+      // Hide login modal automatically
+      document.getElementById("loginModal").style.display = "none";
+    }
+  });
+
+  async function handleLogin() {
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const password = document.getElementById("loginPassword").value;
+    const errorDiv = document.getElementById("loginError");
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      errorDiv.innerText = "Invalid email or password!";
+    } else {
+      const username = email.split('@')[0];
+      const capitalized = username.charAt(0).toUpperCase() + username.slice(1);
+      
+      const staffSelect = document.getElementById("staffSelect");
+      staffSelect.value = capitalized;
+
+      // Hide login modal
+      document.getElementById("loginModal").style.display = "none";
+    }
+  }
+
   let activeMode = "BUY";
   let currentCategory = "all";
   let searchQuery = "";
@@ -484,7 +69,6 @@
     { name: "SOA Egg", cat: "Eggs", buy: 46750, resell: 55000 },
     { name: "Vagos Egg", cat: "Eggs", buy: 46750, resell: 55000 },
     { name: "Yakhuza Egg", cat: "Eggs", buy: 46750, resell: 55000 },
-
     { name: "10K Gold Chain", cat: "Jewelry", buy: 2800, resell: 3500 },
     { name: "Asylum Gold Necklace", cat: "Jewelry", buy: 4650, resell: 5500 },
     { name: "Asylum Prime Necklace", cat: "Jewelry", buy: 5350, resell: 6500 },
@@ -527,7 +111,6 @@
     { name: "Uncut Emerald", cat: "Jewelry", buy: 70, resell: 70 },
     { name: "Uncut Ruby", cat: "Jewelry", buy: 60, resell: 60 },
     { name: "Uncut Sapphire", cat: "Jewelry", buy: 50, resell: 50 },
-
     { name: "PS5", cat: "Electronics", buy: 450, resell: 5500 },
     { name: "Samsung Phone / S10", cat: "Electronics", buy: 450, resell: 5500 },
     { name: "Laptop", cat: "Electronics", buy: 450, resell: 8500 },
@@ -562,7 +145,6 @@
     { name: "Stolen TV", cat: "Electronics", buy: 1317.50, resell: 1550 },
     { name: "VCR Player", cat: "Electronics", buy: 1275, resell: 1500 },
     { name: "Xbox X", cat: "Electronics", buy: 4675, resell: 5500 },
-
     { name: "Captain Skull", cat: "Relics & Art", buy: 145000, resell: 175000 },
     { name: "Panther", cat: "Relics & Art", buy: 62500, resell: 75000 },
     { name: "Golden Pogo", cat: "Miscellaneous", buy: 62500, resell: 75000 },
@@ -580,7 +162,6 @@
     { name: "Skull", cat: "Relics & Art", buy: 892.50, resell: 1050 },
     { name: "Slate Tablet", cat: "Relics & Art", buy: 1530, resell: 1800 },
     { name: "Time Capsule", cat: "Relics & Art", buy: 2295, resell: 2700 },
-
     { name: "Perlemoen", cat: "Miscellaneous", buy: 750, resell: 10000 },
     { name: "Deluxe Treasure Map", cat: "Miscellaneous", buy: 765, resell: 900 },
     { name: "Premium Treasure Map", cat: "Miscellaneous", buy: 600, resell: 800 },
@@ -589,7 +170,6 @@
     { name: "Heavy Armor", cat: "Miscellaneous", buy: 210, resell: 210 },
     { name: "Recycle Box", cat: "Miscellaneous", buy: 250, resell: 285 },
     { name: "Marked Money", cat: "Miscellaneous", buy: 1, resell: 1 },
-
     { name: "Ancient Coin", cat: "Metal Detecting", buy: 1105, resell: 1300 },
     { name: "Black Watch", cat: "Metal Detecting", buy: 552.50, resell: 650 },
     { name: "Bottlecap", cat: "Metal Detecting", buy: 8.50, resell: 10 },
@@ -667,7 +247,7 @@
     { name: "USB Pink", cat: "Heist Gear", price: 9000 },
     { name: "Gun Class 1", cat: "GUNS", price: 100000 },
     { name: "Gun Class 2", cat: "GUNS", price: 250000 },
-    { name: "Gun Class 3", cat: "GUNS", price: 350000 }
+    { name: "Gun Class 3", cat: "GUNS", price: 400000 }
   ];
 
   buyItems.forEach(i => i.qty = 0);
@@ -699,7 +279,6 @@
   function setupCategoryTabs() {
     categoryContainer.innerHTML = "";
     const cats = activeMode === "BUY" ? categoriesBuy : categoriesSell;
-    
     cats.forEach(cat => {
       const btn = document.createElement("button");
       btn.className = `tab-btn ${cat === currentCategory ? 'active' : ''}`;
@@ -765,107 +344,52 @@
   function renderTable() {
     tableHeaderRow.innerHTML = "";
     tableBody.innerHTML = "";
-
     if (activeMode === "BUY") {
-      tableHeaderRow.innerHTML = `
-        <th>Item Name</th><th>Category</th><th>Buy Price</th>
-        <th style="text-align:center;">Quantity</th><th style="text-align:right;">Subtotal</th>
-      `;
+      tableHeaderRow.innerHTML = `<th>Item Name</th><th>Category</th><th>Buy Price</th><th style="text-align:center;">Quantity</th><th style="text-align:right;">Subtotal</th>`;
     } else {
-      tableHeaderRow.innerHTML = `
-        <th>Item Name</th><th>Category</th><th>Selling Price</th>
-        <th style="text-align:center;">Quantity</th><th style="text-align:right;">Subtotal</th>
-      `;
+      tableHeaderRow.innerHTML = `<th>Item Name</th><th>Category</th><th>Selling Price</th><th style="text-align:center;">Quantity</th><th style="text-align:right;">Subtotal</th>`;
     }
-
     const items = getFilteredItems();
-
     items.forEach(item => {
       const tr = document.createElement("tr");
       const price = activeMode === "BUY" ? item.buy : item.price;
       const subtotal = item.qty * price;
-
       tr.innerHTML = `
         <td><span class="item-name">${item.name}</span></td>
         <td><span class="category-badge">${item.cat}</span></td>
         <td><span class="price-tag">${formatCurrency(price)}</span></td>
-        <td style="text-align:center;">
-          <input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0">
-        </td>
+        <td style="text-align:center;"><input type="number" min="0" class="qty-input" value="${item.qty || ''}" placeholder="0"></td>
         <td style="text-align:right;"><span class="item-total ${activeMode === "BUY" ? 'buy' : 'sell'}">${formatCurrency(subtotal)}</span></td>
       `;
-
       const input = tr.querySelector(".qty-input");
       input.addEventListener("input", (e) => {
         item.qty = Math.max(0, parseInt(e.target.value) || 0);
         tr.querySelector(".item-total").innerText = formatCurrency(item.qty * price);
         updateTotals();
       });
-
       tableBody.appendChild(tr);
     });
   }
 
   btnModeBuy.addEventListener("click", () => {
-    if (activeMode !== "BUY") {
-      activeMode = "BUY";
-      currentCategory = "all";
-      setupHeaderAndStats();
-      setupCategoryTabs();
-      renderTable();
-      updateTotals();
-    }
+    if (activeMode !== "BUY") { activeMode = "BUY"; currentCategory = "all"; setupHeaderAndStats(); setupCategoryTabs(); renderTable(); updateTotals(); }
   });
-
   btnModeSell.addEventListener("click", () => {
-    if (activeMode !== "SELL") {
-      activeMode = "SELL";
-      currentCategory = "all";
-      setupHeaderAndStats();
-      setupCategoryTabs();
-      renderTable();
-      updateTotals();
-    }
+    if (activeMode !== "SELL") { activeMode = "SELL"; currentCategory = "all"; setupHeaderAndStats(); setupCategoryTabs(); renderTable(); updateTotals(); }
   });
-
-  searchInput.addEventListener("input", (e) => {
-    searchQuery = e.target.value;
-    renderTable();
-  });
-
-  sortSelect.addEventListener("change", (e) => {
-    currentSort = e.target.value;
-    renderTable();
-  });
-
+  searchInput.addEventListener("input", (e) => { searchQuery = e.target.value; renderTable(); });
+  sortSelect.addEventListener("change", (e) => { currentSort = e.target.value; renderTable(); });
   resetBtn.addEventListener("click", () => {
-    buyItems.forEach(i => i.qty = 0);
-    sellItems.forEach(i => i.qty = 0);
-    searchInput.value = "";
-    searchQuery = "";
-    renderTable();
-    updateTotals();
+    buyItems.forEach(i => i.qty = 0); sellItems.forEach(i => i.qty = 0);
+    searchInput.value = ""; searchQuery = ""; renderTable(); updateTotals();
   });
 
   async function sendToGoogleSheet(staffName, customerName, mode, totalPrice, commissionAmount) {
     if (!GOOGLE_SHEET_URL) return;
-    const payload = {
-      staff: staffName,
-      customer: customerName,
-      type: mode === "BUY" ? "Buying" : "Selling",
-      total: totalPrice,
-      commission: mode === "BUY" ? commissionAmount : 0
-    };
+    const payload = { staff: staffName, customer: customerName, type: mode === "BUY" ? "Buying" : "Selling", total: totalPrice, commission: mode === "BUY" ? commissionAmount : 0 };
     try {
-      await fetch(GOOGLE_SHEET_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-    } catch (err) {
-      console.error("Failed logging transaction", err);
-    }
+      await fetch(GOOGLE_SHEET_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    } catch (err) { console.error("Failed logging transaction", err); }
   }
 
   confirmBtn.addEventListener("click", async () => {
@@ -873,11 +397,7 @@
     const customerName = "Walk-In / Unknown";
     const activeList = activeMode === "BUY" ? buyItems : sellItems;
     const selectedItems = activeList.filter(i => i.qty > 0);
-
-    if (selectedItems.length === 0) {
-      alert("Please enter a quantity for at least one item before confirming.");
-      return;
-    }
+    if (selectedItems.length === 0) { alert("Please enter a quantity for at least one item before confirming."); return; }
 
     let grandTotal = 0;
     let itemLines = selectedItems.map(i => {
@@ -900,37 +420,20 @@
 
     const payload = {
       username: "Strawberry Pawnshop Calculator",
-      embeds: [{
-        title: activeMode === "BUY" ? "🍓 Strawberry Pawn - Buyout" : "⚡ Strawberry Pawn - Sale",
-        color: activeMode === "BUY" ? 16711765 : 16711807,
-        fields: fields,
-        timestamp: new Date().toISOString()
-      }]
+      embeds: [{ title: activeMode === "BUY" ? "🍓 Strawberry Pawn - Buyout" : "⚡ Strawberry Pawn - Sale", color: activeMode === "BUY" ? 16711765 : 16711807, fields: fields, timestamp: new Date().toISOString() }]
     };
 
     try {
-      confirmBtn.disabled = true;
-      confirmBtn.innerText = "Sending...";
-
+      confirmBtn.disabled = true; confirmBtn.innerText = "Sending...";
       sendToGoogleSheet(staffName, customerName, activeMode, grandTotal, commission);
-
-      await fetch(CLOUDFLARE_PROXY_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
+      await fetch(CLOUDFLARE_PROXY_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       alert("Transaction logged successfully!");
-      buyItems.forEach(i => i.qty = 0);
-      sellItems.forEach(i => i.qty = 0);
-      renderTable();
-      updateTotals();
+      buyItems.forEach(i => i.qty = 0); sellItems.forEach(i => i.qty = 0);
+      renderTable(); updateTotals();
     } catch (err) {
-      console.error(err);
-      alert("Error submitting transaction.");
+      console.error(err); alert("Error submitting transaction.");
     } finally {
-      confirmBtn.disabled = false;
-      confirmBtn.innerText = "Confirm Send";
+      confirmBtn.disabled = false; confirmBtn.innerText = "Confirm Send";
     }
   });
 
@@ -939,6 +442,3 @@
   renderTable();
   updateTotals();
 </script>
-
-</body>
-</html>
