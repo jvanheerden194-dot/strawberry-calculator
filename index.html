@@ -42,7 +42,7 @@
     }
 
     /* LOGIN MODAL OVERLAY */
-    #loginModal, #resetModal {
+    #loginModal {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(13, 2, 5, 0.95);
@@ -69,17 +69,22 @@
       color: #fff;
     }
     .login-box h2 span { color: var(--strawberry-red); display: block; }
-    .login-box input {
+    .login-box input, .login-box select {
       background: rgba(20, 2, 8, 0.95);
       border: 2px solid rgba(255, 0, 85, 0.3);
       color: #fff;
       padding: 14px;
       border-radius: 10px;
       font-family: 'Rajdhani', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
+      font-weight: 700;
       outline: none;
     }
-    .login-box input:focus { border-color: var(--strawberry-red); }
+    .login-box select option {
+      background-color: #16090d;
+      color: #fff0f5;
+    }
+    .login-box input:focus, .login-box select:focus { border-color: var(--strawberry-red); }
     .login-btn {
       background: linear-gradient(135deg, var(--strawberry-red) 0%, var(--strawberry-pink) 100%);
       color: #0d0205;
@@ -92,7 +97,7 @@
       cursor: pointer;
       box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
     }
-    .login-error { color: #ff4444; font-size: 0.9rem; min-height: 20px; }
+    .login-error { color: #ff4444; font-size: 0.95rem; min-height: 20px; }
 
     /* TABLET UI */
     .tablet-device {
@@ -137,7 +142,6 @@
     .staff-container label { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; color: var(--strawberry-red); margin-bottom: 2px; display: block; }
     .staff-select { background: transparent; border: none; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; outline: none; width: 100%; pointer-events: none; }
     
-    /* Dark dropdown styling to fix bright white native list */
     .staff-select option {
       background-color: #16090d;
       color: #fff0f5;
@@ -172,24 +176,25 @@
 </head>
 <body>
 
-  <!-- LOGIN MODAL -->
+  <!-- SIMPLE NAME + PIN LOGIN MODAL -->
   <div id="loginModal">
     <div class="login-box hud-box hud-corner">
       <h2>Strawberry Pawn <span>Staff Login</span></h2>
-      <input type="email" id="loginEmail" placeholder="Staff Email">
-      <input type="password" id="loginPassword" placeholder="Password (Set yours on 1st login)">
+      <select id="loginName">
+        <option value="" disabled selected>Select Your Name...</option>
+        <option value="Admin">Admin</option>
+        <option value="Lexi">Lexi</option>
+        <option value="Thas">Thas</option>
+        <option value="Caleb">Caleb</option>
+        <option value="Dan">Dan</option>
+        <option value="Joe">Joe</option>
+        <option value="Trinity">Trinity</option>
+        <option value="Miguel">Miguel</option>
+        <option value="Rachel">Rachel</option>
+      </select>
+      <input type="password" id="loginPin" placeholder="Enter PIN (Sets your PIN on 1st login)">
       <button class="login-btn" onclick="handleLogin()">Login to Calculator</button>
       <div class="login-error" id="loginError"></div>
-    </div>
-  </div>
-
-  <!-- PASSWORD RESET MODAL -->
-  <div id="resetModal" style="display: none;">
-    <div class="login-box hud-box hud-corner">
-      <h2>Strawberry Pawn <span>Set New Password</span></h2>
-      <input type="password" id="newPassword" placeholder="Enter New Password">
-      <button class="login-btn" onclick="handlePasswordUpdate()">Update Password</button>
-      <div class="login-error" id="resetError"></div>
     </div>
   </div>
 
@@ -223,6 +228,7 @@
           <div>
             <label for="staffSelect">👤 Logged In Staff</label>
             <select id="staffSelect" class="staff-select">
+              <option value="Admin">Admin</option>
               <option value="Lexi">Lexi</option>
               <option value="Thas">Thas</option>
               <option value="Caleb">Caleb</option>
@@ -234,7 +240,7 @@
             </select>
           </div>
           <div style="display: flex; gap: 6px;">
-            <button id="adminResetBtn" class="logout-btn" style="display: none; border-color: #00ffaa; background: rgba(0,255,170,0.15);" onclick="adminTriggerReset()">Reset Pass</button>
+            <button id="adminResetBtn" class="logout-btn" style="display: none; border-color: #00ffaa; background: rgba(0,255,170,0.15);" onclick="adminResetPin()">Reset PIN</button>
             <button class="logout-btn" onclick="handleLogout()">Logout</button>
           </div>
         </div>
@@ -278,164 +284,116 @@
   const SUPABASE_ANON_KEY = "sb_publishable_vRe4G0ynsLD9j2JRSwvgMA_CDSgywTK";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Define God User Supervisor Email as admin
-  const GOD_USER_EMAIL = "admin@strawberry.com";
+  let isAdminUser = false;
 
-  function checkGodUser(email) {
+  function applyRolePermissions(staffName) {
     const staffSelect = document.getElementById("staffSelect");
     const adminResetBtn = document.getElementById("adminResetBtn");
 
-    if (email.toLowerCase() === GOD_USER_EMAIL) {
-      staffSelect.style.pointerEvents = "auto"; // Admin can switch staff names freely
+    if (staffName === "Admin") {
+      isAdminUser = true;
+      staffSelect.style.pointerEvents = "auto";
       adminResetBtn.style.display = "inline-block";
     } else {
-      staffSelect.style.pointerEvents = "none"; // Regular staff locked to profile
+      isAdminUser = false;
+      staffSelect.style.pointerEvents = "none";
       adminResetBtn.style.display = "none";
     }
   }
 
-  async function adminTriggerReset() {
-    const selectedStaff = document.getElementById("staffSelect").value.toLowerCase();
-    const targetEmail = `${selectedStaff}@strawberry.com`;
-
-    const newPassword = prompt(`Enter the new password for ${selectedStaff.toUpperCase()} (${targetEmail}):\n(Minimum 6 characters)`);
-    if (!newPassword) return;
-
-    if (newPassword.length < 6) {
-      alert("Password must be at least 6 characters!");
-      return;
-    }
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-      alert("Your admin session expired. Please log in again.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-reset-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ targetEmail, newPassword })
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        alert("Error: " + (result.error || "Failed to reset password"));
-      } else {
-        alert(`Password for ${selectedStaff.toUpperCase()} has been changed immediately!`);
-      }
-    } catch (err) {
-      alert("Network error: " + err.message);
-    }
-  }
-
-  // --- AUTO-LOGIN & PASSWORD RECOVERY CHECK ON PAGE LOAD ---
-  window.addEventListener("DOMContentLoaded", async () => {
-    const hash = window.location.hash;
-    if (hash && hash.includes("type=recovery")) {
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("resetModal").style.display = "flex";
-      return;
-    }
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    
-    if (session && session.user) {
-      const email = session.user.email;
-      const username = email.split('@')[0];
-      const capitalized = username.charAt(0).toUpperCase() + username.slice(1);
-      
-      const staffSelect = document.getElementById("staffSelect");
-      staffSelect.value = capitalized;
-
-      checkGodUser(email);
+  // --- CHECK SAVED SESSION ON PAGE LOAD ---
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedStaff = localStorage.getItem("strawberry_staff");
+    if (savedStaff) {
+      document.getElementById("staffSelect").value = savedStaff;
+      applyRolePermissions(savedStaff);
       document.getElementById("loginModal").style.display = "none";
     }
   });
 
-  // --- LOGIN + FIRST-TIME PASSWORD CLAIMING ---
+  // --- SIMPLE NAME + PIN LOGIN & FIRST-TIME CLAIM ---
   async function handleLogin() {
-    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-    const password = document.getElementById("loginPassword").value;
+    const staffName = document.getElementById("loginName").value;
+    const pin = document.getElementById("loginPin").value.trim();
     const errorDiv = document.getElementById("loginError");
 
-    if (!email || !password) {
-      errorDiv.innerText = "Please enter both email and password!";
+    if (!staffName) {
+      errorDiv.innerText = "Please select your name first!";
       return;
     }
 
-    if (password.length < 6) {
-      errorDiv.innerText = "Password must be at least 6 characters!";
+    if (!pin || pin.length < 4) {
+      errorDiv.innerText = "PIN must be at least 4 characters!";
       return;
     }
 
-    errorDiv.innerText = "Checking credentials...";
+    errorDiv.innerText = "Checking PIN...";
 
-    // 1. Try logging in with existing account
-    let { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+    // Look up staff member in staff_pins table
+    const { data, error } = await supabaseClient
+      .from("staff_pins")
+      .select("pin")
+      .eq("staff_name", staffName)
+      .maybeSingle();
 
-    // 2. If login fails, try creating their account with the entered password (First-time setup)
     if (error) {
-      const signUpRes = await supabaseClient.auth.signUp({
-        email: email,
-        password: password
-      });
+      errorDiv.innerText = "Database error: " + error.message;
+      return;
+    }
 
-      if (signUpRes.error) {
-        // Account already exists, meaning they typed the wrong password
-        errorDiv.innerText = "Incorrect password for this account!";
+    if (!data) {
+      // First-time login: save this PIN for them
+      const { error: insertError } = await supabaseClient
+        .from("staff_pins")
+        .insert([{ staff_name: staffName, pin: pin }]);
+
+      if (insertError) {
+        errorDiv.innerText = "Could not save PIN: " + insertError.message;
         return;
       }
-
-      data = signUpRes.data;
+    } else if (data.pin !== pin) {
+      // Existing PIN didn't match
+      errorDiv.innerText = "Incorrect PIN for " + staffName + "!";
+      return;
     }
 
-    // 3. Log them in and set their staff dropdown profile
-    const username = email.split('@')[0];
-    const capitalized = username.charAt(0).toUpperCase() + username.slice(1);
-    
-    const staffSelect = document.getElementById("staffSelect");
-    staffSelect.value = capitalized;
-
-    checkGodUser(email);
+    // Success! Log in
+    localStorage.setItem("strawberry_staff", staffName);
+    document.getElementById("staffSelect").value = staffName;
+    applyRolePermissions(staffName);
     errorDiv.innerText = "";
     document.getElementById("loginModal").style.display = "none";
   }
 
-  async function handlePasswordUpdate() {
-    const newPassword = document.getElementById("newPassword").value;
-    const resetError = document.getElementById("resetError");
+  // --- ADMIN 1-CLICK PIN WIPE ---
+  async function adminResetPin() {
+    if (!isAdminUser) return;
 
-    if (!newPassword || newPassword.length < 6) {
-      resetError.innerText = "Password must be at least 6 characters.";
+    const targetStaff = document.getElementById("staffSelect").value;
+    if (targetStaff === "Admin") {
+      alert("Select a staff member from the dropdown first before clicking Reset PIN.");
       return;
     }
 
-    const { data, error } = await supabaseClient.auth.updateUser({
-      password: newPassword
-    });
+    if (!confirm(`Wipe ${targetStaff}'s PIN so they can set a new one on their next login?`)) return;
+
+    const { error } = await supabaseClient
+      .from("staff_pins")
+      .delete()
+      .eq("staff_name", targetStaff);
 
     if (error) {
-      resetError.innerText = error.message;
+      alert("Error resetting PIN: " + error.message);
     } else {
-      alert("Password updated successfully!");
-      document.getElementById("resetModal").style.display = "none";
-      window.location.hash = "";
-      window.location.reload();
+      alert(`${targetStaff}'s PIN has been cleared! Tell them to log in and enter their new PIN.`);
     }
   }
 
-  async function handleLogout() {
-    await supabaseClient.auth.signOut();
-    document.getElementById("loginEmail").value = "";
-    document.getElementById("loginPassword").value = "";
+  function handleLogout() {
+    localStorage.removeItem("strawberry_staff");
+    isAdminUser = false;
+    document.getElementById("loginName").value = "";
+    document.getElementById("loginPin").value = "";
     document.getElementById("loginError").innerText = "";
     document.getElementById("loginModal").style.display = "flex";
   }
