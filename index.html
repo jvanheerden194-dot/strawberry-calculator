@@ -301,14 +301,14 @@
     }
   }
 
-  // --- CHECK SAVED SESSION ON PAGE LOAD ---
+  // --- PRE-SELECT LAST USED NAME ON PAGE LOAD (STILL REQUIRES PIN) ---
   window.addEventListener("DOMContentLoaded", () => {
-    const savedStaff = localStorage.getItem("strawberry_staff");
-    if (savedStaff) {
-      document.getElementById("staffSelect").value = savedStaff;
-      applyRolePermissions(savedStaff);
-      document.getElementById("loginModal").style.display = "none";
+    const lastName = localStorage.getItem("strawberry_last_name");
+    if (lastName) {
+      document.getElementById("loginName").value = lastName;
+      document.getElementById("staffSelect").value = lastName;
     }
+    document.getElementById("loginModal").style.display = "flex";
   });
 
   // --- SIMPLE NAME + PIN LOGIN & FIRST-TIME CLAIM ---
@@ -357,8 +357,8 @@
       return;
     }
 
-    // Success! Log in
-    localStorage.setItem("strawberry_staff", staffName);
+    // Success! Remember last chosen name and log in
+    localStorage.setItem("strawberry_last_name", staffName);
     document.getElementById("staffSelect").value = staffName;
     applyRolePermissions(staffName);
     errorDiv.innerText = "";
@@ -390,9 +390,9 @@
   }
 
   function handleLogout() {
-    localStorage.removeItem("strawberry_staff");
+    const currentName = document.getElementById("staffSelect").value || localStorage.getItem("strawberry_last_name") || "";
     isAdminUser = false;
-    document.getElementById("loginName").value = "";
+    document.getElementById("loginName").value = currentName;
     document.getElementById("loginPin").value = "";
     document.getElementById("loginError").innerText = "";
     document.getElementById("loginModal").style.display = "flex";
